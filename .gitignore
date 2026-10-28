@@ -54,3 +54,7 @@ signing.properties
 
 
 .kotlin/*
+
+# Aurora Store Jetour: nunca subir llaves de firma propias
+*.jks
+!app/testkey.jks

@@ -1,0 +1,133 @@
+name: Publicar Aurora Store Jetour
+
+# Se ejecuta a mano: pestaña "Actions" -> "Publicar Aurora Store Jetour" -> "Run workflow".
+# Compila la APK firmada, crea un Release y publica release_feed.json,
+# que es lo que lee la app para avisar que hay una actualización.
+on:
+  workflow_dispatch:
+    inputs:
+      changelog:
+        description: "Novedades de esta versión (se muestran en la app)"
+        required: true
+        default: "Mejoras y correcciones"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Descargar el código
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Instalar Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Instalar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Preparar gradlew
+        run: |
+          sed -i 's/\r$//' gradlew
+          chmod +x ./gradlew
+
+      - name: Verificar la llave de firma
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          if [ -z "$KEYSTORE_BASE64" ] || [ -z "$KEY_ALIAS" ] || [ -z "$KEY_PASSWORD" ]; then
+            echo "Faltan los secretos KEYSTORE_BASE64, KEY_ALIAS o KEY_PASSWORD (Settings -> Secrets and variables -> Actions)."
+            exit 1
+          fi
+
+      - name: Cargar la llave de firma
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > app/keystore.jks
+          echo "STORE_FILE=keystore.jks" > app/signing.properties
+          echo "KEY_ALIAS=$KEY_ALIAS" >> app/signing.properties
+          echo "KEY_PASSWORD=$KEY_PASSWORD" >> app/signing.properties
+
+      - name: Compilar APK
+        run: ./gradlew :app:assembleJetourRelease
+
+      - name: Buscar la APK
+        id: apk-path
+        run: |
+          APK=$(find app/build/outputs/apk -name '*jetour*release*.apk' | head -n 1)
+          if [ -z "$APK" ]; then
+            echo "No se encontró la APK"
+            exit 1
+          fi
+          echo "path=$APK" >> $GITHUB_OUTPUT
+          echo "APK: $APK"
+
+      - name: Leer datos de la APK
+        id: apk-info
+        uses: hkusu/apk-info-action@v1
+        with:
+          apk-path: ${{ steps.apk-path.outputs.path }}
+
+      - name: Armar etiqueta
+        id: tag
+        env:
+          VERSION_NAME: ${{ steps.apk-info.outputs.version-name }}
+        run: |
+          version="${VERSION_NAME#*\(}"
+          version="${version%\)}"
+          echo "TAG=jetour-${version}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+
+      - name: Generar release_feed.json
+        env:
+          TAG_NAME: ${{ steps.tag.outputs.TAG }}
+          CHANGELOG: ${{ github.event.inputs.changelog }}
+          VERSION_NAME: ${{ steps.apk-info.outputs.version-name }}
+          VERSION_CODE: ${{ steps.apk-info.outputs.version-code }}
+          FILE_SIZE: ${{ steps.apk-info.outputs.file-size }}
+        run: |
+          cp "${{ steps.apk-path.outputs.path }}" AuroraStoreJetour.apk
+          SHA256=$(sha256sum AuroraStoreJetour.apk | awk '{print $1}')
+          TS=$(git log -1 --format=%ct)
+          UPDATED_ON=$(date +"%b %d, %Y")
+          LAST_COMMIT=$(git log -1 --pretty=%h)
+          REPO_URL="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}"
+
+          jq -n \
+            --arg version_name "$VERSION_NAME" \
+            --arg version_code "$VERSION_CODE" \
+            --arg sha256 "$SHA256" \
+            --arg changelog "$CHANGELOG" \
+            --arg size "$FILE_SIZE" \
+            --arg last_commit "$LAST_COMMIT" \
+            --arg updated_on "$UPDATED_ON" \
+            --arg timestamp "$TS" \
+            --arg download_url "${REPO_URL}/releases/download/${TAG_NAME}/AuroraStoreJetour.apk" \
+            --arg icon_url "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/refs/heads/master/app/src/main/res/mipmap-hdpi/ic_launcher.png" \
+            '{version_name:$version_name, version_code:$version_code, download_url:$download_url, sha256:$sha256, icon_url:$icon_url, changelog:$changelog, size:$size, last_commit:$last_commit, updated_on:$updated_on, timestamp:$timestamp}' \
+            > release_feed.json
+          cat release_feed.json
+
+      - name: Publicar Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.TAG }}
+          name: Aurora Store Jetour ${{ steps.tag.outputs.TAG }}
+          body: ${{ github.event.inputs.changelog }}
+          make_latest: true
+          files: |
+            AuroraStoreJetour.apk
+            release_feed.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

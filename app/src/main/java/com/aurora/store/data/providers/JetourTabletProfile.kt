@@ -1,5 +1,5 @@
 /*
- * Perfil de dispositivo "Jetour T1 Tablet"
+ * Perfil de dispositivo "Jetour T1 Tablet" — Aurora Store Jetour (MainthorCar)
  * SPDX-License-Identifier: GPL-3.0-or-later
  *
  * Hace que Google Play vea la pantalla de la Jetour T1 (Snapdragon 8155, Android 11)

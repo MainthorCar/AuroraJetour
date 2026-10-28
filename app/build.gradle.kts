@@ -19,13 +19,25 @@ plugins {
     alias(libs.plugins.hilt.android.plugin)
 }
 
-val lastCommitHash = providers.exec {
-    commandLine("git", "rev-parse", "--short", "HEAD")
-}.standardOutput.asText.map { it.trim() }
+// Si la carpeta no es un repositorio git (por ejemplo, copiada a mano a otra PC),
+// se usan valores fijos para que el proyecto compile igual.
+val hasGit = rootProject.file(".git").exists()
 
-val lastCommitTimestamp = providers.exec {
-    commandLine("git", "log", "-1", "--format=%ct")
-}.standardOutput.asText.map { it.trim() }
+val lastCommitHash = if (hasGit) {
+    providers.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+    }.standardOutput.asText.map { it.trim() }
+} else {
+    providers.provider { "local" }
+}
+
+val lastCommitTimestamp = if (hasGit) {
+    providers.exec {
+        commandLine("git", "log", "-1", "--format=%ct")
+    }.standardOutput.asText.map { it.trim() }
+} else {
+    providers.provider { "0" }
+}
 
 java {
     toolchain {
@@ -130,7 +142,6 @@ configure<ApplicationExtension> {
 
     productFlavors {
         create("vanilla") {
-            isDefault = true
             dimension = "device"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
@@ -148,22 +159,26 @@ configure<ApplicationExtension> {
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
 
-        // This flavor is only for aosp devices without rooted devices make support for microG
-        create("byd") {
+        // Aurora Store Jetour: pantalla de la Jetour T1 (AOSP sin root, con microG).
+        // Basado en el flavor "byd" de AuroraStore-BYD (kangrio).
+        create("jetour") {
+            isDefault = true
             dimension = "device"
-            applicationIdSuffix = ".byd"
+            applicationId = "com.mainthorcar.aurorajetour"
 
-            // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X, 1000+ -> XX.X.X
-            val bydVersionCode = 103
-            val major = bydVersionCode / 100
-            val minor = (bydVersionCode / 10) % 10
-            val patch = bydVersionCode % 10
-            val bydVersionName = "byd($major.$minor.$patch)"
+            // Versión de Aurora Store Jetour. Subir este número en cada release.
+            // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X
+            val jetourVersionCode = 100
+            val major = jetourVersionCode / 100
+            val minor = (jetourVersionCode / 10) % 10
+            val patch = jetourVersionCode % 10
+            val jetourVersionName = "jetour($major.$minor.$patch)"
 
-            versionNameSuffix = "-$bydVersionName"
+            versionNameSuffix = "-$jetourVersionName"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
 
-            val patchVersionCode = 3
+            // Subir este número cuando cambie el parche que se aplica a las apps
+            val patchVersionCode = 4
             buildConfigField("int", "PATCH_VERSION_CODE", "$patchVersionCode")
         }
     }

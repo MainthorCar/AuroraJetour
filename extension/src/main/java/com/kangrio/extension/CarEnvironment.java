@@ -1,3 +1,8 @@
+/*
+ * Aurora Store Jetour — MainthorCar
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 package com.kangrio.extension;
 
 import android.annotation.SuppressLint;

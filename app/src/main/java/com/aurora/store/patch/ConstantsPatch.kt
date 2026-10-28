@@ -1,11 +1,13 @@
 package com.aurora.store.patch
 
 object ConstantsPatch {
-    const val FLAVOUR_BYD = "byd"
-    const val FLAVOUR_BYD_PACKAGE_NAME = "com.aurora.store.byd"
+    const val FLAVOUR_BYD = "jetour"
+    const val FLAVOUR_BYD_PACKAGE_NAME = "com.mainthorcar.aurorajetour"
+
+    // Aurora Store Jetour: de dónde se bajan las actualizaciones de la propia app
+    const val SELF_UPDATE_REPO_URL = "https://github.com/MainthorCar/AuroraJetour"
+    const val SELF_UPDATE_FEED_URL = "${SELF_UPDATE_REPO_URL}/releases/latest/download/release_feed.json"
     const val GITHUB_API_URL = "https://api.github.com/repositories"
-    const val GITHUB_SELF_REPO_ID = "1228674301"
-    const val GITHUB_API_REPO_URL = "${GITHUB_API_URL}/${GITHUB_SELF_REPO_ID}"
     const val GITHUB_APPS_REPO_ID = "1301975707"
     const val UPDATE_APPS_URL = "${GITHUB_API_URL}/${GITHUB_APPS_REPO_ID}/releases/latest"
 

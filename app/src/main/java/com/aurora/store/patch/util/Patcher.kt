@@ -6,7 +6,6 @@ import com.aurora.store.BuildConfig
 import com.aurora.store.R
 import com.aurora.store.patch.ConstantsPatch
 import com.aurora.store.patch.state.PatchProgressState
-import com.aurora.store.util.Preferences
 import com.reandroid.apk.ApkModule
 import com.reandroid.app.AndroidManifest
 import com.reandroid.archive.ByteInputSource
@@ -163,7 +162,8 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         addPermission(apkModule, "android.permission.QUERY_ALL_PACKAGES")
 
         val application: ResXmlElement = apkModule.androidManifest.applicationElement
-        val enabledCrashReport = Preferences.getBoolean(context, ConstantsPatch.META_DATA_ENABLE_CRASH_REPORT, true)
+        // Aurora Store Jetour: reporte de errores apagado (el servidor pertenece a AuroraStore-BYD)
+        val enabledCrashReport = false
 
         application.getOrCreateAndroidAttribute(
             "appComponentFactory", 0

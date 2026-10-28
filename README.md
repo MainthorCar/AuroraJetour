@@ -1,205 +1,61 @@
-# Aurora Store (BYD Variant)
+# Aurora Store Jetour
 
-A custom build of Aurora Store tailored for BYD Android-based head units.
+Versión comunitaria y **no oficial** de [Aurora Store](https://github.com/whyorean/AuroraStore), adaptada a la pantalla de la **Jetour T1** (Snapdragon 8155, Android 11).
 
----
-![Stars](https://img.shields.io/github/stars/kangrio/AuroraStore-BYD) ![Forks](https://img.shields.io/github/forks/kangrio/AuroraStore-BYD) ![Downloads](https://img.shields.io/github/downloads/kangrio/AuroraStore-BYD/total) ![Release](https://img.shields.io/github/v/release/kangrio/AuroraStore-BYD)
+Está basada en [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD) de **kangrio**, que hizo posible usar microG y las apps de Google en pantallas de auto sin root.
 
-![Open Issues](https://img.shields.io/github/issues-raw/kangrio/AuroraStore-BYD) ![Closed Issues](https://img.shields.io/github/issues-closed-raw/kangrio/AuroraStore-BYD) ![License](https://img.shields.io/github/license/kangrio/AuroraStore-BYD) ![Last Commit](https://img.shields.io/github/last-commit/kangrio/AuroraStore-BYD)
-
-## 🚀 How to Get Started
-
-Follow these steps carefully to set up Aurora Store on your BYD head unit:
-
-1. **Uninstall MicroG** — If MicroG is already installed on your device, uninstall it first before proceeding.
-2. **Install this app** — Install Aurora Store (BYD Variant) on your BYD head unit.
-3. **Open the app & follow onboarding** — Launch the app and complete the onboarding setup (login with Google or anonymous account).
-4. **Install your first app** — Search and download any app from the store.
-5. **Install the MicroG bundle when prompted** — A popup will appear asking you to install the MicroG bundle. **You must install it**, otherwise no downloaded apps will be able to open.
-   - Once MicroG is installed, **tap "Install"** to proceed with installing the app you just downloaded.
-6. **Allow autostart for MicroG** — After your app is installed, go to your device's autostart settings and **enable autostart for both**:
-   - `MicroG Service`
-   - `MicroG Companion`
-7. **Open your app** — Launch the app you just installed and enjoy it on your BYD head unit.
-8. **Enjoy your drive! 🚗**
-
-> [!IMPORTANT]
-> Skipping step 5 (MicroG bundle installation) or step 6 (autostart permissions) will prevent apps from launching correctly.
+> [!NOTE]
+> Este proyecto no está relacionado con Aurora OSS, Jetour, Chery ni BYD. "Jetour" se usa solo para indicar con qué pantalla es compatible.
 
 ---
 
-## ✨ Features
+## ✨ Qué agrega esta versión
 
-* ✅ Automatic detection of MicroG
-* 📦 Prompt to install MicroG if not available
-* 🔧 Automatic patching of apps to support MicroG after download
-* 📲 Enables apps that normally require Google Mobile Services (GMS)
+* 📱 **Se presenta como tablet ante Google Play.** Perfil fijo "Jetour T1 · Galaxy Tab S7+": identidad de una tablet real (Samsung SM-T970, Android 11), con el hardware real de la pantalla (procesador, OpenGL, idiomas), pantalla 1920×1080 horizontal y sin las funciones de auto.
+* 🚗➡️📱 **Las apps instaladas ven una tablet, no un auto.** Dentro de cada app parcheada se oculta `android.hardware.type.automotive` y el modo de interfaz "auto". Así, por ejemplo, Waze deja de pedir Android Auto.
+* 🔄 **Actualizaciones desde este repositorio.** La app avisa cuando hay una versión nueva y se actualiza con un toque.
+* 🔇 **Sin reporte de errores a servidores externos.**
 
----
+Todo lo demás (microG, parcheo de apps, instaladores) viene de AuroraStore-BYD.
 
-## ✅ Tested Apps (Working)
+## 🚀 Instalación
 
-* Google Maps
-* Google Search
-* Google Gemini
-* Google News
-* Gmail
-* YouTube
-* YouTube Music
-* etc
+1. Desinstalá cualquier otra Aurora Store y microG que tengas.
+2. Bajá `AuroraStoreJetour.apk` del último [Release](https://github.com/MainthorCar/AuroraJetour/releases/latest) e instalalo.
+3. Abrí la app, completá el asistente e iniciá sesión.
+4. Instalá tu primera app. Cuando te lo pida, **instalá el paquete microG**.
+5. Activá el **inicio automático** de *MicroG Service* y *MicroG Companion* en los ajustes de la pantalla.
 
-✔ Basic functionality works
-✔ Login may work depending on MicroG setup
+## ⚠️ Limitaciones conocidas
 
----
+* La pantalla de la Jetour T1 **no tiene Widevine**: Netflix, Disney+, Prime Video y similares se instalan pero no reproducen contenido protegido. YouTube, Spotify, Twitch, Kodi y VLC funcionan normal.
+* El "Ok Google" con la pantalla en reposo no funciona con microG.
+* Algunas apps con controles de integridad fuertes pueden no funcionar.
 
-## ❌ Tested Apps (Not Working Properly)
+## 🛠 Compilar
 
-* Netflix
+* Android Studio → **Build Variants** → `app`: **jetourDebug** (pruebas, firma de prueba) o **jetourRelease** (requiere `app/signing.properties`).
+* Publicar una versión: pestaña **Actions** → **Publicar Aurora Store Jetour** → **Run workflow**. Necesita los secretos `KEYSTORE_BASE64`, `KEY_ALIAS` y `KEY_PASSWORD`.
+* Antes de publicar, subí `jetourVersionCode` en `app/build.gradle.kts`.
 
-#### ⚠ Issue:
-* App crash
+## 📄 Licencia y modificaciones
 
-### Possible Reasons
+Este programa es software libre bajo la [GNU GPL v3 o posterior](LICENSE), igual que el proyecto original.
 
-* Play Integrity / DRM enforcement
-* Streaming protection checks
-* Missing or limited Widevine support
+Desde octubre de 2026, MainthorCar modificó la versión 1.0.3 de AuroraStore-BYD así:
+- se agregó el perfil Jetour T1 Tablet y la ocultación del entorno de auto;
+- se cambiaron el nombre, el paquete y el ícono;
+- las actualizaciones apuntan a este repositorio;
+- se desactivó el reporte de errores.
 
----
+El detalle está en el historial de commits.
 
-## ⚠️ Compatibility Warning
+## 🙏 Créditos
 
-> Some apps may NOT work even after patching.
+* [Aurora Store](https://github.com/whyorean/AuroraStore): **Rahul Kumar Patel (whyorean)**, **AuroraOSS** y The Calyx Institute. Es el cliente libre de Google Play en el que se basa todo.
+* [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD): **kangrio**. Adaptó Aurora a pantallas de auto con microG y parcheo de apps sin root. Si te sirve este proyecto, apoyá también el suyo: [ko-fi.com/kangrio](https://ko-fi.com/kangrio).
+* [microG / GmsCore](https://github.com/microg/GmsCore): implementación libre de los servicios de Google.
+* [ARSCLib](https://github.com/REAndroid/ARSCLib): lectura y escritura de recursos binarios de Android.
+* [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass) de **LSPosed**.
 
-Reasons include:
-
-* Strong Play Integrity / SafetyNet checks
-* Hardcoded Google Play Services dependencies
-* Native (NDK) verification
-* DRM / streaming restrictions
-
-👉 You must test apps yourself. No guarantee of compatibility.
-
----
-
-## 🐛 Crash Reporting
-
-Every patched app includes optional crash reporting. **Crash reporting can be enabled or disabled from the settings.**
-
-When crash reporting is enabled and a patched app crashes, crash information is automatically sent to the crash-reporting server and added to the existing GitHub issue for that app. This helps identify and troubleshoot crashes across different BYD devices and Android versions.
-
-Crash reporting was added in [this commit](https://github.com/kangrio/AuroraStore-BYD/commit/1dbfe47c).
-
-The following information is included in each report:
-
-* **Android** — Android release version
-* **Build fingerprint** — device/build fingerprint
-* **Package** — application package name
-* **Version code** — installed app version code
-* **Version name** — installed app version name
-* **Report** — crash stack trace
-
-Example:
-
-```json
-{
-  "android": "12",
-  "buildfingerprint": "BYD AUTO/BYD-AUTO/BYD-AUTO:12/V417IR/320:user/release-keys",
-  "package": "com.example.app",
-  "versioncode": 123,
-  "versionname": "1.2.3",
-  "report": "java.lang.RuntimeException: ..."
-}
-```
-
-Crash reports are used to help debug patched apps and improve compatibility with BYD Android head units. Users can disable crash reporting at any time from the app settings.
-
----
-
-## 🚗 Tested Environment
-
-* BYD Android Head Unit (DiLink system)
-
----
-
-## 🛠 Known Limitations
-
-* DRM-protected apps may fail
-* Streaming apps may stop playback
-* Push notifications may not work reliably
-* Google login may fail in some apps
-* Some patched apps may crash
-
----
-
-## 🔐 Disclaimer
-
-This project is for educational and personal use only.
-
-* You are responsible for usage
-* Do not violate app terms of service
-* No warranty provided
-
----
-
-## 📌 Notes
-
-* Keep MicroG updated
-* Reinstall apps if patching fails
-* Clear app data if issues occur
-
----
-
-## 🚧 Future Improvements
-
-* WIP
-
----
-
-## 🌟 Awesome Apps for BYD Head Units
-
-A curated list of apps and tools that work great on BYD Android head units (DiLink).
-
-### 🎙️ AI & Voice Assistants
-
-| App                 | Description                                                                                                                                                                 | Link                                                      |
-|---------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
-| **Assistant (BYD)** | AI voice assistant launcher with offline wake-word detection ("Hey Rio", "Alexa"), one-tap launch for Google Assistant / ChatGPT / Claude, and BYD DiLink onboarding wizard | [kangrio/Assistant](https://github.com/kangrio/Assistant) |
-| **Google / Gemini** | Google's AI assistant and multimodal AI — search, navigation, smart home control                                                                                            | Available via Aurora Store                                |
-| **ChatGPT**         | OpenAI's conversational AI with voice mode                                                                                                                                  | Available via Aurora Store                                |
-
-### 🗺️ Navigation
-
-| App             | Description                                                                       | Link                       |
-|-----------------|-----------------------------------------------------------------------------------|----------------------------|
-| **Google Maps** | Full-featured navigation and maps                                                 | Available via Aurora Store |
-| **Waze**        | Community-based traffic and navigation                                            | Available via Aurora Store |
-| **Radarbot**    | Speed camera & radar detector — supported version **8.8.4 (build 189) and below** | Available via Aurora Store |
-
-### 🎵 Media & Entertainment
-
-| App               | Description                 | Link                       |
-|-------------------|-----------------------------|----------------------------|
-| **YouTube**       | Video streaming             | Available via Aurora Store |
-| **YouTube Music** | Music streaming from Google | Available via Aurora Store |
-
-### 📧 Productivity
-
-| App             | Description            | Link                       |
-|-----------------|------------------------|----------------------------|
-| **Gmail**       | Google email client    | Available via Aurora Store |
-| **Google News** | Personalized news feed | Available via Aurora Store |
-
-> [!TIP]
-> Use **[Assistant (BYD)](https://github.com/kangrio/Assistant)** to quickly launch any of these AI apps with a custom wake word — no screen tapping needed while driving.
-
----
-
-### 🙏 Credits
-
-- [Aurora Store (official)](https://github.com/whyorean/AuroraStore) An unofficial FOSS client to Google Play.
-- [ARSCLib](https://github.com/REAndroid/ARSCLib) Android binary resources read/write library
-- [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass) LSPass: Bypass restrictions on non-SDK interfaces
-
----
+El aviso legal original de Aurora Store está en [DISCLAIMER.md](DISCLAIMER.md).

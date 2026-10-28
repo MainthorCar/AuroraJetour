@@ -58,7 +58,7 @@ object WelcomeDialog {
                         Icon(Icons.Filled.Info, contentDescription = null)
                         Spacer(Modifier.width(8.dp))
                         Text(
-                            text = "Welcome to Aurora Store (BYD Variant)",
+                            text = "Bienvenido a Aurora Store Jetour",
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                         )
@@ -67,37 +67,43 @@ object WelcomeDialog {
                     Spacer(Modifier.height(16.dp))
 
                     Text(
-                        text = "This build is a community fork adapted to run on BYD Android " +
-                                "(AOSP) head units. Before you continue, please read where " +
-                                "this app comes from and what it does.",
+                        text = "Versión comunitaria y no oficial de Aurora Store, adaptada a la " +
+                                "pantalla de la Jetour T1. Antes de seguir, leé de dónde viene " +
+                                "esta app y qué hace.",
                         style = MaterialTheme.typography.bodyMedium,
                     )
 
                     Spacer(Modifier.height(20.dp))
-                    SectionHeader(icon = Icons.Filled.Code, title = "Source")
+                    SectionHeader(icon = Icons.Filled.Code, title = "Origen y créditos")
                     InfoRow(
-                        label = "This fork",
-                        value = "AuroraStore-BYD, maintained by KangRio",
+                        label = "Esta versión",
+                        value = "Aurora Store Jetour, por MainthorCar",
                     )
                     InfoRow(
-                        label = "Upstream",
-                        value = "Aurora Store, by whyorean (AuroraOSS)",
+                        label = "Basada en",
+                        value = "AuroraStore-BYD, de KangRio",
                     )
                     InfoRow(
-                        label = "License",
-                        value = "GPLv3 — free and open source software",
+                        label = "Original",
+                        value = "Aurora Store, de whyorean (AuroraOSS)",
                     )
-                    LinkRow("This fork: https://github.com/kangrio/AuroraStore-BYD", "https://github.com/kangrio/AuroraStore-BYD", uriHandler)
+                    InfoRow(
+                        label = "Licencia",
+                        value = "GPLv3 — software libre y de código abierto",
+                    )
+                    LinkRow("Esta versión: https://github.com/MainthorCar/AuroraJetour", "https://github.com/MainthorCar/AuroraJetour", uriHandler)
+                    LinkRow("Basada en: https://github.com/kangrio/AuroraStore-BYD", "https://github.com/kangrio/AuroraStore-BYD", uriHandler)
                     LinkRow("Original: https://github.com/whyorean/AuroraStore", "https://github.com/whyorean/AuroraStore", uriHandler)
-                    LinkRow("Official Site: https://auroraoss.com/", "https://auroraoss.com/", uriHandler)
+                    LinkRow("Sitio oficial de Aurora: https://auroraoss.com/", "https://auroraoss.com/", uriHandler)
 
                     Spacer(Modifier.height(20.dp))
-                    SectionHeader(icon = Icons.Filled.Policy, title = "This BYD Build")
+                    SectionHeader(icon = Icons.Filled.Policy, title = "Esta versión para Jetour")
                     Text(
-                        text = "Packaged and signed independently for BYD head units, with rootless " +
-                                "microG/GmsCore patching so apps run without root access. See the " +
-                                "README.md in the repository for build-specific notes and known " +
-                                "limitations on this platform.",
+                        text = "Compilada y firmada de forma independiente. Se presenta ante " +
+                                "Google Play como una tablet y hace que las apps instaladas vean " +
+                                "una tablet en lugar de un auto. Usa microG para que las apps de " +
+                                "Google funcionen sin root. No está relacionada con Aurora OSS, " +
+                                "Jetour ni Chery.",
                         style = MaterialTheme.typography.bodySmall,
                     )
 
@@ -112,7 +118,7 @@ object WelcomeDialog {
                             onCheckedChange = { dontShowAgain = it },
                         )
                         Text(
-                            text = "Don't show this again",
+                            text = "No mostrar de nuevo",
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(start = 4.dp),
                         )
@@ -132,7 +138,7 @@ object WelcomeDialog {
                             .fillMaxWidth()
                             .align(Alignment.CenterHorizontally),
                     ) {
-                        Text("Got it, continue")
+                        Text("Entendido, continuar")
                     }
                 }
             }

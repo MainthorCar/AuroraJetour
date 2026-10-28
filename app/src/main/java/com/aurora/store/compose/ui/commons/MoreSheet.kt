@@ -41,6 +41,7 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.aurora.store.R
 import com.aurora.store.compose.navigation.Destination
+import com.aurora.store.patch.UtilPatch
 import com.aurora.store.viewmodel.commons.MoreViewModel
 
 private data class MoreItem(
@@ -56,7 +57,7 @@ fun MoreSheet(
     onNavigateTo: (Destination) -> Unit = {},
     viewModel: MoreViewModel = hiltViewModel()
 ) {
-    val mainItems = listOf(
+    val mainItems = listOfNotNull(
         MoreItem(R.string.title_apps_games, R.drawable.ic_apps) {
             onNavigateTo(Destination.Installed)
         },
@@ -66,8 +67,13 @@ fun MoreSheet(
         MoreItem(R.string.title_favourites_manager, R.drawable.ic_favorite_unchecked) {
             onNavigateTo(Destination.Favourite)
         },
-        MoreItem(R.string.title_spoof_manager, R.drawable.ic_spoof) {
-            onNavigateTo(Destination.Spoof)
+        // Aurora Store Jetour: el perfil de tablet va fijo, el gestor queda oculto
+        if (UtilPatch.isBydFlavour()) {
+            null
+        } else {
+            MoreItem(R.string.title_spoof_manager, R.drawable.ic_spoof) {
+                onNavigateTo(Destination.Spoof)
+            }
         }
     )
     val extraItems = listOf(

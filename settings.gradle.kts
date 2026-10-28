@@ -11,6 +11,10 @@ pluginManagement {
         mavenCentral()
     }
 }
+// Baja Java 21 automáticamente si la PC no lo tiene instalado
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {

@@ -1,3 +1,13 @@
+Aurora Store Jetour — Changelog: jetour(1.0.0)
+• Basado en AuroraStore-BYD v1.0.3 de kangrio
+• Perfil fijo "Jetour T1 · Galaxy Tab S7+": Google Play ve una tablet
+• Las apps instaladas ven una tablet en vez de un auto (Waze deja de pedir Android Auto)
+• Nombre, paquete (com.mainthorcar.aurorajetour) e ícono propios
+• Actualizaciones desde github.com/MainthorCar/AuroraJetour
+• Reporte de errores desactivado
+
+--- Historial de AuroraStore-BYD (kangrio) ---
+
 Changelog: v1.0.3
 • feat: add native library patching
 • fix: fix Parcelable ClassNotFoundException, fixes #34, #35
