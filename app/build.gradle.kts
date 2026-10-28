@@ -19,25 +19,11 @@ plugins {
     alias(libs.plugins.hilt.android.plugin)
 }
 
-// Si la carpeta no es un repositorio git (por ejemplo, copiada a mano a otra PC),
-// se usan valores fijos para que el proyecto compile igual.
-val hasGit = rootProject.file(".git").exists()
-
-val lastCommitHash = if (hasGit) {
-    providers.exec {
-        commandLine("git", "rev-parse", "--short", "HEAD")
-    }.standardOutput.asText.map { it.trim() }
-} else {
-    providers.provider { "local" }
-}
-
-val lastCommitTimestamp = if (hasGit) {
-    providers.exec {
-        commandLine("git", "log", "-1", "--format=%ct")
-    }.standardOutput.asText.map { it.trim() }
-} else {
-    providers.provider { "0" }
-}
+// Datos del commit para la versión. GitHub Actions los pasa con
+// -PcommitHash=... y -PcommitTimestamp=...; en una PC se usan valores fijos,
+// así el proyecto compila aunque Git no esté instalado o no esté en el PATH.
+val lastCommitHash = providers.gradleProperty("commitHash").orElse("local")
+val lastCommitTimestamp = providers.gradleProperty("commitTimestamp").orElse("0")
 
 java {
     toolchain {

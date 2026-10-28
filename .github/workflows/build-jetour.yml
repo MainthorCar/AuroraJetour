@@ -61,7 +61,10 @@ jobs:
           echo "KEY_PASSWORD=$KEY_PASSWORD" >> app/signing.properties
 
       - name: Compilar APK
-        run: ./gradlew :app:assembleJetourRelease
+        run: |
+          ./gradlew :app:assembleJetourRelease \
+            -PcommitHash="$(git rev-parse --short HEAD)" \
+            -PcommitTimestamp="$(git log -1 --format=%ct)"
 
       - name: Buscar la APK
         id: apk-path
