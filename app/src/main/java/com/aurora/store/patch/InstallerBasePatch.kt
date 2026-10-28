@@ -13,6 +13,7 @@ object InstallerBasePatch {
         files: List<File>
     ): List<File> {
         if (packageName == context.packageName) return files
+        if (packageName in ConstantsPatch.NO_PATCH_PACKAGES) return files
         val patcher = Patcher(context, packageName, files)
 
         if (packageName in ExternalAppsPatch.apps) {

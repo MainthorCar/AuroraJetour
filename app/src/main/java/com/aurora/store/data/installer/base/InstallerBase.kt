@@ -125,7 +125,8 @@ abstract class InstallerBase(private val context: Context) : IInstaller {
         }
         return downloadDir.listFiles()!!.filter { it.path.endsWith(".apk") }
             .let {
-            if (UtilPatch.isBydFlavour()) {
+            // Aurora Store Jetour: las librerías compartidas (ej. Trichrome) conservan su firma original
+            if (UtilPatch.isBydFlavour() && sharedLibPackageName.isBlank()) {
                 InstallerBasePatch.getFiles(context, packageName, it)
             } else {
                 it

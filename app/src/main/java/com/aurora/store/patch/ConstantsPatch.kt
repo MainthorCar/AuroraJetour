@@ -13,6 +13,23 @@ object ConstantsPatch {
 
     const val HIDE_SHOW_WELCOME_DIALOG = "HIDE_SHOW_WELCOME_DIALOG"
 
+    /**
+     * Aurora Store Jetour: apps que se instalan tal cual las firmó Google, sin parche de microG.
+     * Chrome y WebView usan una librería aparte (Trichrome) que debe conservar la firma
+     * original; si se las vuelve a firmar, Android no instala la librería y Chrome se cierra.
+     */
+    val NO_PATCH_PACKAGES = setOf(
+        "com.android.chrome",
+        "com.chrome.beta",
+        "com.chrome.dev",
+        "com.chrome.canary",
+        "com.google.android.webview",
+        "com.google.android.webview.beta",
+        "com.google.android.webview.dev",
+        "com.google.android.webview.canary",
+        "com.google.android.trichromelibrary"
+    )
+
     const val PATCH_APP_COMPONENT_FACTORY_CLASS = "com.kangrio.extension.SpoofAppComponentFactory"
     const val META_DATA_SPOOFED_CERTIFICATES = "org.microg.gms.spoofed_certificates"
     const val META_DATA_PATCH_VERSION_CODE = "com.kangrio.extension.patch_version_code"
