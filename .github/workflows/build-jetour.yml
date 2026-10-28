@@ -30,8 +30,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Instalar Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Android SDK (ya viene instalado en la máquina de GitHub)
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
       - name: Preparar gradlew
         run: |
