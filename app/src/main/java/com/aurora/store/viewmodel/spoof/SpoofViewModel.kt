@@ -28,7 +28,7 @@ class SpoofViewModel @Inject constructor(
     fun logout() = authProvider.logout()
 
     val defaultLocale: Locale = Locale.getDefault()
-    val defaultProperties = NativeDeviceInfoProvider.getNativeDeviceProperties(context)
+    val defaultProperties = spoofProvider.defaultDeviceProperties
 
     private val _currentLocale = MutableStateFlow(spoofProvider.locale)
     val currentLocale = _currentLocale.asStateFlow()
@@ -45,7 +45,7 @@ class SpoofViewModel @Inject constructor(
     fun onDeviceSelected(properties: Properties) {
         _currentDevice.value = properties
 
-        if (currentDevice == defaultProperties) {
+        if (properties == defaultProperties) {
             spoofProvider.removeSpoofDeviceProperties()
         } else {
             spoofProvider.setSpoofDeviceProperties(properties)

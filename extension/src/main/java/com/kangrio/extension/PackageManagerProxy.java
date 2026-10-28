@@ -115,6 +115,9 @@ public class PackageManagerProxy extends Binder {
             case "getInstallerPackageName" -> getInstallerPackageName(code, data, reply, flags);
             case "getInstallSourceInfo" -> getInstallSourceInfo(code, data, reply, flags);
             case "getPackageInfo" -> getPackageInfo(code, data, reply, flags);
+            // Jetour: ocultar que la pantalla es un auto
+            case "hasSystemFeature" -> hasSystemFeature(code, data, reply, flags);
+            case "getSystemAvailableFeatures" -> getSystemAvailableFeatures(code, data, reply, flags);
 
             default -> transactOriginal(code, data, reply, flags);
         };
@@ -240,6 +243,66 @@ public class PackageManagerProxy extends Binder {
         reply.writeString(PLAY_STORE_PACKAGE_NAME);
         reply.setDataPosition(0);
         return true;
+    }
+
+    // ---------------------------------------------------------------------
+    // Jetour T1: la app ve una tablet, no un auto
+    // ---------------------------------------------------------------------
+
+    private boolean hasSystemFeature(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags) throws RemoteException {
+        int position = data.dataPosition();
+        String name;
+        try {
+            data.enforceInterface(IPackageManager.Stub.DESCRIPTOR);
+            name = data.readString();
+        } finally {
+            data.setDataPosition(position);
+        }
+
+        if (reply == null || !CarEnvironment.isHiddenFeature(name)) {
+            return transactOriginal(code, data, reply, flags);
+        }
+
+        reply.writeNoException();
+        reply.writeInt(0); // false: "no soy un auto"
+        reply.setDataPosition(0);
+        return true;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private boolean getSystemAvailableFeatures(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags) throws RemoteException {
+        if (reply == null) {
+            return transactOriginal(code, data, reply, flags);
+        }
+        try {
+            Object slice = iPackageManager.getClass()
+                    .getMethod("getSystemAvailableFeatures")
+                    .invoke(iPackageManager);
+            if (slice == null) {
+                return transactOriginal(code, data, reply, flags);
+            }
+
+            java.util.List<android.content.pm.FeatureInfo> original =
+                    (java.util.List<android.content.pm.FeatureInfo>) slice.getClass().getMethod("getList").invoke(slice);
+            java.util.List<android.content.pm.FeatureInfo> filtered = new java.util.ArrayList<>();
+            for (android.content.pm.FeatureInfo info : original) {
+                if (info.name == null || !CarEnvironment.isHiddenFeature(info.name)) {
+                    filtered.add(info);
+                }
+            }
+
+            Class<?> sliceClass = Class.forName("android.content.pm.ParceledListSlice");
+            Parcelable newSlice = (Parcelable) sliceClass.getConstructor(java.util.List.class).newInstance(filtered);
+
+            reply.writeNoException();
+            reply.writeInt(1);
+            newSlice.writeToParcel(reply, Parcelable.PARCELABLE_WRITE_RETURN_VALUE);
+            reply.setDataPosition(0);
+            return true;
+        } catch (Throwable e) {
+            Log.w(TAG, "getSystemAvailableFeatures spoof failed", e);
+            return transactOriginal(code, data, reply, flags);
+        }
     }
 
     private boolean isSystemApp(int code, @NonNull Parcel data, @Nullable Parcel reply, int flags) throws RemoteException {

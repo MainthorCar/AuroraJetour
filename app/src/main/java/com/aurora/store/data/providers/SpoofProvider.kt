@@ -48,7 +48,26 @@ class SpoofProvider @Inject constructor(
         private const val DEVICE_SPOOF_PROPERTIES = "DEVICE_SPOOF_PROPERTIES"
     }
 
-    val availableSpoofDeviceProperties get() = availableDeviceProperties
+    /**
+     * Perfil que se usa cuando no se eligió ninguno a mano.
+     * En la Jetour (o cualquier pantalla de auto) es "Jetour T1 Tablet"; en otro equipo, el real.
+     */
+    val defaultDeviceProperties: Properties
+        get() = if (JetourTabletProfile.isSupported(context)) {
+            JetourTabletProfile.build(context)
+        } else {
+            NativeDeviceInfoProvider.getNativeDeviceProperties(context)
+        }
+
+    val availableSpoofDeviceProperties: List<Properties>
+        get() = if (JetourTabletProfile.isSupported(context)) {
+            // El perfil de la Jetour ya aparece arriba como "predeterminado";
+            // se agregan también los datos reales de la pantalla para poder comparar.
+            listOf(NativeDeviceInfoProvider.getNativeDeviceProperties(context)) +
+                availableDeviceProperties
+        } else {
+            availableDeviceProperties
+        }
     val availableSpoofLocales = Locale.getAvailableLocales().toMutableList().apply {
         remove(Locale.getDefault())
         sortBy { it.displayName }
@@ -59,7 +78,7 @@ class SpoofProvider @Inject constructor(
             val currentProperties = if (isDeviceSpoofEnabled) {
                 spoofDeviceProperties
             } else {
-                NativeDeviceInfoProvider.getNativeDeviceProperties(context)
+                defaultDeviceProperties
             }
             setVendingVersion(currentProperties)
             return currentProperties

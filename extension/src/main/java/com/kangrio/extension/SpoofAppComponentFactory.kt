@@ -37,6 +37,8 @@ class SpoofAppComponentFactory: AppComponentFactory() {
 
         }catch (_: Throwable) {}
         PackageManagerProxy.init()
+        // Jetour: la app ve una tablet, no un auto
+        CarEnvironment.initUiModeProxy()
     }
 
     private fun initCrashReport(application: Application) {
@@ -70,6 +72,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
 
     override fun instantiateApplication(cl: ClassLoader, className: String): Application {
         return checkCompatWrapper(super.instantiateApplication(cl, className)).also {
+            CarEnvironment.attach(it)
             initCrashReport(it)
         }
     }
