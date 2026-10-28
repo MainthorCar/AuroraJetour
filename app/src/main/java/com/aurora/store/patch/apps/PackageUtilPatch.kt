@@ -46,7 +46,7 @@ object PackageUtilPatch {
 
             // original apps
             try {
-                if (packageName !in ConstantsPatch.NO_PATCH_PACKAGES && isHasNewerPatch(context, packageName)) {
+                if (isHasNewerPatch(context, packageName)) {
                     return true
                 }
 
