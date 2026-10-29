@@ -13,6 +13,9 @@ object ConstantsPatch {
 
     const val HIDE_SHOW_WELCOME_DIALOG = "HIDE_SHOW_WELCOME_DIALOG"
 
+    // Aurora Store Jetour: alto de la barra del aire acondicionado de la Jetour T1 (en píxeles)
+    const val JETOUR_CLIMATE_BAR_HEIGHT_PX = 149
+
     const val PATCH_APP_COMPONENT_FACTORY_CLASS = "com.kangrio.extension.SpoofAppComponentFactory"
     const val META_DATA_SPOOFED_CERTIFICATES = "org.microg.gms.spoofed_certificates"
     const val META_DATA_PATCH_VERSION_CODE = "com.kangrio.extension.patch_version_code"

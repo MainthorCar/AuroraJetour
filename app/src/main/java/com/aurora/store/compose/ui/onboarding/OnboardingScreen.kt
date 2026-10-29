@@ -7,6 +7,10 @@
 package com.aurora.store.compose.ui.onboarding
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +48,8 @@ import com.aurora.store.compose.composable.Logo
 import com.aurora.store.compose.composable.PageIndicator
 import com.aurora.store.compose.preview.ThemePreviewProvider
 import com.aurora.store.compose.ui.onboarding.navigation.OnboardingPage
+import com.aurora.store.patch.ConstantsPatch
+import com.aurora.store.patch.UtilPatch
 import com.aurora.store.viewmodel.onboarding.OnboardingUiState
 import com.aurora.store.viewmodel.onboarding.OnboardingViewModel
 import kotlinx.coroutines.launch
@@ -97,7 +103,20 @@ private fun ScreenContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .navigationBarsPadding()
+                        .then(
+                            // Aurora Store Jetour: en la bienvenida, dejar libre la barra del
+                            // aire acondicionado de la pantalla (no se informa como barra de
+                            // navegación). Se usa el mayor entre esa barra y la de navegación.
+                            if (UtilPatch.isBydFlavour()) {
+                                Modifier.windowInsetsPadding(
+                                    WindowInsets.navigationBars.union(
+                                        WindowInsets(bottom = ConstantsPatch.JETOUR_CLIMATE_BAR_HEIGHT_PX)
+                                    )
+                                )
+                            } else {
+                                Modifier.navigationBarsPadding()
+                            }
+                        )
                         .padding(
                             vertical = dimensionResource(R.dimen.spacing_medium),
                             horizontal = if (windowAdaptiveInfo.isWindowCompact) {
