@@ -162,6 +162,7 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         addPermission(apkModule, "android.permission.QUERY_ALL_PACKAGES")
 
         val application: ResXmlElement = apkModule.androidManifest.applicationElement
+        disableAppZygote(application)
         // Aurora Store Jetour: reporte de errores apagado (el servidor pertenece a AuroraStore-BYD)
         val enabledCrashReport = false
 
@@ -175,6 +176,22 @@ class Patcher(val context: Context, val packageName: String, val apkFiles: List<
         // source https://github.com/microg/GmsCore/blob/master/play-services-core/src/huawei/AndroidManifest.xml
         if (apkModule.packageName == MICROG_PACKAGE_NAME) {
             applyMicroGSettings(apkModule)
+        }
+    }
+
+    /**
+     * Aurora Store Jetour: en la pantalla de la Jetour T1 el sistema no logra crear el
+     * "App Zygote" de las apps parcheadas (ChildZygoteProcess nulo) y cierra la app a la fuerza.
+     * Le pasa a Chrome con sus procesos "sandboxed". Se quita useAppZygote de los servicios y
+     * zygotePreloadName de la aplicación: los procesos aislados se crean por el camino normal.
+     */
+    private fun disableAppZygote(application: ResXmlElement) {
+        try {
+            application.removeAttributeIf { it.name == "zygotePreloadName" }
+            application.listElements("service").forEach { service ->
+                service.removeAttributeIf { it.name == "useAppZygote" }
+            }
+        } catch (_: Throwable) {
         }
     }
 
