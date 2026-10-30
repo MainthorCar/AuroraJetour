@@ -154,7 +154,7 @@ configure<ApplicationExtension> {
 
             // Versión de Aurora Store Jetour. Subir este número en cada release.
             // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X
-            val jetourVersionCode = 103
+            val jetourVersionCode = 104
             val major = jetourVersionCode / 100
             val minor = (jetourVersionCode / 10) % 10
             val patch = jetourVersionCode % 10
@@ -164,7 +164,7 @@ configure<ApplicationExtension> {
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
 
             // Subir este número cuando cambie el parche que se aplica a las apps
-            val patchVersionCode = 4
+            val patchVersionCode = 5
             buildConfigField("int", "PATCH_VERSION_CODE", "$patchVersionCode")
         }
     }

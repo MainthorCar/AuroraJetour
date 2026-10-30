@@ -39,6 +39,8 @@ class SpoofAppComponentFactory: AppComponentFactory() {
         PackageManagerProxy.init()
         // Jetour: la app ve una tablet, no un auto
         CarEnvironment.initUiModeProxy()
+        // Jetour: pantallas sin vibrador -> evitar que las apps se cierren al vibrar
+        NoVibratorService.init()
     }
 
     private fun initCrashReport(application: Application) {
