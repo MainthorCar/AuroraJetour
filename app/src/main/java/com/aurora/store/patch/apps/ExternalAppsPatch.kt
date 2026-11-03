@@ -7,7 +7,6 @@ import com.aurora.gplayapi.data.serializers.PropertiesSerializer
 import com.aurora.store.patch.data.GitHubRelease
 import com.aurora.store.data.room.download.Download
 import com.aurora.store.patch.ConstantsPatch
-import com.aurora.store.util.PackageUtil
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.contextual
@@ -59,14 +58,22 @@ object ExternalAppsPatch {
         }.get()
     }
 
+    /**
+     * Aurora Store Jetour: YouTube y YouTube Music se instalan SIEMPRE desde la versión
+     * preparada para microG (Morphe). Nunca se cae al APK original de Google: ese pide los
+     * servicios de Google reales ("Instala Servicios de Google Play") y queda en un círculo
+     * de "Actualizar". Si la versión preparada no está disponible, la descarga falla con aviso.
+     */
     fun get(context: Context, download: Download): List<PlayFile> {
-        if (PackageUtil.isInstalled(context, download.packageName) &&
-            !PackageUtilPatch.isMorphePatch(context, download.packageName)) return download.fileList
-
         val name = apps[download.packageName] ?: return download.fileList
         val githubRelease = getLatestRelease()
-        val latestApp = githubRelease.assets
-            .firstOrNull { it.name.startsWith(name) } ?: return download.fileList
+        val latestApp = githubRelease.assets.firstOrNull { asset ->
+            val assetName = asset.name.lowercase()
+            assetName.startsWith(name.lowercase()) &&
+                (download.packageName != YOUTUBE_PACKAGE || !assetName.contains("music"))
+        } ?: throw IllegalStateException(
+            "No se encontró la versión preparada de $name. Probá de nuevo más tarde."
+        )
 
         return listOf(
             PlayFile(

@@ -35,6 +35,13 @@ object PackageUtilPatch {
 
     fun isUpdatable(context: Context, packageName: String, versionCode: Long): Boolean {
         return try {
+            // Aurora Store Jetour: YouTube / YouTube Music solo se actualizan desde la versión
+            // preparada (Morphe). Si la instalada no es Morphe, no se ofrece actualización:
+            // hay que desinstalarla y volver a instalarla desde Aurora.
+            if (packageName in ExternalAppsPatch.apps.keys && !isMorphePatch(context, packageName)) {
+                return false
+            }
+
             // prebuild apk patched with morphe-patches
             if (packageName in ExternalAppsPatch.apps.keys && isMorphePatch(context, packageName)) {
                 val currentVersion = morpheVersion(context, packageName)
