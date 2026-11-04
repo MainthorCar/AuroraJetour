@@ -1,18 +1,18 @@
 # Aurora Store Jetour — Historial del proyecto
 
-Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 30/10/2026.
+Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 04/11/2026.
 
 ---
 
 ## 1. Qué es
 
-**Aurora Store Jetour** es una versión de Aurora Store para la pantalla de la **Jetour T1**. Está basada en [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD) de kangrio, versión 1.0.3.
+**Aurora Store Jetour** es una versión de Aurora Store para la pantalla de la **Jetour T1**. Desde la 1.0.7 está basada en **GStore** de kangrio (el nuevo nombre de [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD)). Hasta la 1.0.6 se basaba en AuroraStore-BYD 1.0.3.
 
 - **Repo:** https://github.com/MainthorCar/AuroraJetour (es un fork, con los créditos visibles).
 - **Paquete:** `com.mainthorcar.aurorajetour`
 - **Link de instalación** (siempre baja la última versión):
   `https://github.com/MainthorCar/AuroraJetour/releases/latest/download/AuroraStoreJetour.apk`
-- **Licencia:** GPL-3.0. El código tiene que ser público y hay que mantener los créditos (Aurora OSS / whyorean, kangrio, microG, ARSCLib, LSPosed).
+- **Licencia:** GPL-3.0. El código tiene que ser público y hay que mantener los créditos (Aurora OSS / whyorean, kangrio, microG, ARSCLib, LSPosed, Morphe).
 
 ## 2. La pantalla del auto (datos reales)
 
@@ -40,7 +40,10 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 3. **Vibrador falso** (`NoVibratorService.java`). Si el equipo no tiene vibrador, responde "no hay vibración" en vez de dejar que la app se cierre.
 4. **Sin App Zygote** (`Patcher.kt` → `disableAppZygote`). Al parchear se quitan `useAppZygote` y `zygotePreloadName`, que en esta pantalla hacen que el sistema cierre Chrome a la fuerza.
 5. **Bienvenida:** los botones Atrás / Continuar suben 149 px para que no los tape la barra del aire.
-6. **Marca propia:** nombre, paquete, ícono propio, bienvenida en español con créditos, reporte de errores apagado (el servidor era de kangrio) y actualizaciones desde el repo propio.
+6. **Marca propia:** nombre, paquete, ícono propio (también en la pantalla de inicio de la app), bienvenida en español con créditos, reporte de errores apagado (el servidor era de kangrio) y actualizaciones desde el repo propio.
+7. **App en español** (`res/values-es/strings.xml`). GStore había quitado las traducciones; se recuperó el español y se tradujeron los textos nuevos. Los demás idiomas quedan en inglés.
+
+**Lo que viene de GStore (kangrio):** microG, parcheo de apps, instaladores y la **preparación de YouTube y YouTube Music en la propia pantalla con Morphe** (baja la versión correcta de APKMirror y la parchea). Por eso, desde la 1.0.7, YouTube volvió a funcionar.
 
 ## 4. Historial de versiones
 
@@ -52,6 +55,9 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | 1.0.3 | Botones de la bienvenida por encima de la barra del aire |
 | 1.0.4 | Vibrador falso: arregla Google, que se cerraba al tocar el buscador (parche 5) |
 | 1.0.5 | Sin App Zygote: arregla Chrome, que se cerraba al abrir (parche 6) |
+| 1.0.6 | Intento de arreglar YouTube con las versiones preparadas de kangrio. **No sirvió**: kangrio dejó de publicarlas. |
+| 1.0.7 | **Pasa a la base GStore** (kangrio), con YouTube preparado en la pantalla con Morphe. Se mantiene todo lo de Jetour (parche 8). Publicada primero como prueba (`jetour-1.0.7-prueba-11`); YouTube, Chrome, Maps y microG andan. |
+| 1.0.8 | Logo propio en la pantalla de inicio y vuelve el español. Primera versión normal con la base GStore. |
 
 ## 5. Problemas resueltos (y cómo se encontraron)
 
@@ -63,6 +69,10 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | Google se cierra al tocar el buscador | Google nuevo usa vibración y Android 11 sin vibrador lanza `NullPointerException` | Vibrador falso (1.0.4) |
 | Google se cierra al cargar sugerencias (`SIGTRAP` en `libwebviewchromium.so`) | WebView **153** instalada a mano el 23/10, choca con Google 17.70 | `pm uninstall com.android.webview`: vuelve a la de fábrica (83). Waze anda igual. |
 | Chrome se cierra al abrir | `Failure starting process ... sandboxed_process0` y `ChildZygoteProcess` nulo: el sistema no crea el App Zygote | Quitar App Zygote al parchear (1.0.5) |
+| YouTube queda en "Actualizar" y no abre | kangrio dejó de publicar las APK de YouTube ya preparadas | Base GStore: prepara YouTube en la pantalla con Morphe (1.0.7) |
+| Actualizaciones de microG quedan en "Instalando" para siempre | Descargas viejas trabadas en Aurora → Descargas | Aurora → Descargas → **Cancel all** y borrar las descargas viejas. Después se instalan solas. |
+| Íconos distintos después de la 1.0.7 | GStore trajo su propio logo para la pantalla de inicio | Logo propio otra vez (1.0.8). Los iconitos de menús quedan con el estilo de GStore. |
+| App en inglés después de la 1.0.7 | GStore quitó las traducciones | Español recuperado (1.0.8) |
 | Netflix / Disney+ no reproducen | La pantalla no tiene Widevine | No tiene arreglo legal. Opciones: firmware de Jetour con Widevine, bajar en el celular, archivos propios con VLC o Kodi. |
 
 **Lección:** no adivinar. Primero el registro del error, después el arreglo.
@@ -90,9 +100,11 @@ Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el
 
 ## 7. Publicar una actualización
 
-1. Subir `jetourVersionCode` en `app/build.gradle.kts`: 105 es 1.0.5, 106 es 1.0.6, etc.
-2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 6). Así las apps instaladas aparecen para re-parchearse.
-3. GitHub → **Actions → Publicar Aurora Store Jetour → Run workflow**, escribir las novedades y apretar el botón.
+1. Subir `jetourVersionCode` en `app/build.gradle.kts`: 107 es 1.0.7, 108 es 1.0.8, etc.
+2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 8). Así las apps instaladas aparecen para re-parchearse.
+3. GitHub → **Actions → Publicar Aurora Store Jetour → Run workflow**, elegir la rama **master**, escribir las novedades y apretar el botón.
+   - Con **Versión de prueba** tildada se publica como pre-release (`jetour-X-prueba-N`). **No** le llega a nadie como actualización: la bajás vos a mano y la probás.
+   - Sin tildar, es la versión normal y les llega a todos.
 4. Esperar el ✅ (unos 5 min; "Queued" es normal). Tus amigos ven la actualización en Aurora → Actualizaciones → Buscar actualizaciones.
 
 ## 8. Firma y seguridad
@@ -100,14 +112,15 @@ Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el
 - **Llave:** `C:\aurora store jetour\llave\aurorajetour.jks`, alias `aurorajetour`. Hay respaldo en pendrive o Drive, con la contraseña anotada en papel.
 - **Nunca subirla a GitHub.** Está en GitHub como secretos: `KEYSTORE_BASE64`, `KEY_ALIAS`, `KEY_PASSWORD`.
 - Si se pierde, no se pueden publicar más actualizaciones y todos tendrían que reinstalar de cero.
-- Los builds `jetourDebug` de la PC son de prueba (`.debug`, firma de prueba). No van al auto.
+- Los builds `vanillaDebug` de la PC son de prueba (`.debug`, firma de prueba). No van al auto.
 
 ## 9. Trabajar en la PC
 
 - Proyecto: `C:\aurora store jetour\AuroraJetour-github` (clon del repo).
 - Traer cambios: Android Studio → menú **master** → **Update Project** (Ctrl+T).
-- Variante: **jetourDebug**. No aceptar "AGP Upgrade Assistant" ni actualizar Gradle.
+- Variante: **vanillaDebug** (antes de la 1.0.7 era jetourDebug). No aceptar "AGP Upgrade Assistant" ni actualizar Gradle.
 - Java 21 se baja solo (plugin foojay en `settings.gradle.kts`).
+- Las librerías de Morphe vienen de GitHub Packages: para compilar en la PC hace falta `gpr.user` (tu usuario) y `gpr.key` (un token de GitHub con permiso `read:packages`) en `C:\Users\<vos>\.gradle\gradle.properties`. En GitHub Actions no hace falta nada.
 - `C:\aurora store jetour\viejo`: respaldo de la versión vieja.
 
 ## 10. Instalación limpia (para amigos o para el video)
@@ -120,7 +133,8 @@ Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el
 
 ## 11. Pendientes e ideas
 
-- Confirmar que Chrome anda con la 1.0.5 (iniciar sesión y elegirlo como navegador).
+- YouTube se vuelve a abrir y pausa la música al volver desde el T1 Launcher: lo más probable es que el launcher abra la app con `CLEAR_TASK`/`CLEAR_TOP`. Hay que usar `getLaunchIntentForPackage` con solo `FLAG_ACTIVITY_NEW_TASK`. Se ve en el chat del launcher.
+- Traer novedades de kangrio: `git fetch kangrio` y unirlas a master (el remoto `kangrio` es solo para leer, **nunca** se sube nada ahí).
 - WebView 153: quitada. Waze anda con la de fábrica (83). Si en el futuro se actualiza, que sea a una versión **más nueva que la de Chrome** y de la misma fuente; probar Google después.
 - Releases viejas para borrar en GitHub si molestan: `jetour-1.0.0-5`, `jetour-1.0.1-4`.
 - Posible tutorial o video de instalación para el README.
