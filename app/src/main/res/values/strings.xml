@@ -1,25 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?><!--
-  ~ Aurora Store
-  ~  Copyright (C) 2021, Rahul Kumar Patel <whyorean@gmail.com>
-  ~  Copyright (C) 2022, The Calyx Institute
-  ~  Copyright (C) 2023, grrfe <grrfe@420blaze.it>
-  ~
-  ~  Aurora Store is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 2 of the License, or
-  ~  (at your option) any later version.
-  ~
-  ~  Aurora Store is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
-  ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with Aurora Store.  If not, see <http://www.gnu.org/licenses/>.
-  ~
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ SPDX-FileCopyrightText: 2021 Aurora OSS
+  ~ SPDX-FileCopyrightText: 2022 The Calyx Institute
+  ~ SPDX-FileCopyrightText: 2023 grrfe <grrfe@420blaze.it>
+  ~ SPDX-License-Identifier: GPL-3.0-or-later
   -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="app_name" translatable="false">"Aurora Store"</string>
+    <string name="app_name" translatable="false">"Aurora Store Jetour"</string>
     <string name="download_speed_bytes" translatable="false">%1$d B/s</string>
     <string name="download_speed_kb" translatable="false">%1$s KB/s</string>
     <string name="download_speed_mb" translatable="false">%1$s MB/s</string>
@@ -42,25 +29,25 @@
     <string name="about_paypal">PayPal</string>
     <string name="about_paypal_summary">"Donate via PayPal"</string>
     <string name="about_telegram">"Telegram"</string>
-    <string name="about_telegram_summary">"Join the Aurora Support group for discussions or suggestions."</string>
+    <string name="about_telegram_summary">"Comunidad de GStore (kangrio), el proyecto en el que se basa Aurora Store Jetour."</string>
     <string name="about_xda">"XDA Forums"</string>
     <string name="about_xda_summary">"See the Aurora Store XDA thread for discussions or suggestions."</string>
     <string name="account_anonymous">"Anonymous"</string>
     <string name="account_google">"Google"</string>
     <string name="account_login_using">Log in using</string>
-    <string name="account_logout">Log out from Aurora</string>
+    <string name="account_logout">Log out from Aurora Store Jetour</string>
     <string name="account_set_default">Set as default</string>
     <string name="account_default">Default</string>
     <string name="account_remove">Remove</string>
     <string name="account_remove_title">Remove account?</string>
-    <string name="account_remove_message">Remove %1$s from Aurora Store?</string>
-    <string name="account_remove_last_message">This is your only account. Removing it will log you out, and you won\'t be able to use Aurora Store until you sign in again.</string>
+    <string name="account_remove_message">Remove %1$s from Aurora Store Jetour?</string>
+    <string name="account_remove_last_message">This is your only account. Removing it will log you out, and you won\'t be able to use Aurora Store Jetour until you sign in again.</string>
     <string name="account_add">Add account</string>
     <string name="account_add_device">Device accounts</string>
     <string name="account_add_google">Sign in with Google</string>
     <string name="account_add_anonymous">Add anonymous account</string>
     <string name="account_set_default_title">Switch default account?</string>
-    <string name="account_set_default_message">Aurora Store will restart to use the new default account.</string>
+    <string name="account_set_default_message">Aurora Store Jetour will restart to use the new default account.</string>
     <string name="account_switching">Switching account…</string>
     <string name="account_adding">Adding account…</string>
     <string name="account_refresh_all">Refresh all accounts</string>
@@ -121,6 +108,7 @@
     <string name="action_share">"Share"</string>
     <string name="action_uninstall">"Uninstall"</string>
     <string name="action_uninstall_success">"Successfully uninstalled"</string>
+    <string name="action_free_up_space">Free up space</string>
     <string name="action_home_screen">Add to home screen</string>
     <string name="action_info">"App info"</string>
     <string name="action_update">"Update"</string>
@@ -213,20 +201,22 @@
     <string name="installer_root_unavailable">No root access. Grant it or change the installer.</string>
     <string name="installer_shizuku_unavailable">Shizuku is not installed or set up properly.</string>
     <string name="installer_fallback_session">Chosen installer is unavailable, using the default installer instead.</string>
+    <!-- Installer description, then the app providing it, e.g. "… · Served by Shevery" -->
+    <string name="installer_provider">%1$s · Served by %2$s</string>
 
     <!-- Security -->
     <string name="title_security">Security</string>
     <string name="app_lock_title">App lock</string>
-    <string name="app_lock_summary">Require biometric or screen-lock authentication to open Aurora Store.</string>
+    <string name="app_lock_summary">Require biometric or screen-lock authentication to open Aurora Store Jetour.</string>
     <string name="app_lock_no_credential">Set up a screen lock (PIN, pattern, password or biometric) on your device first.</string>
-    <string name="app_lock_locked_message">Authentication is required to access Aurora Store</string>
+    <string name="app_lock_locked_message">Authentication is required to access Aurora Store Jetour</string>
     <string name="app_lock_unlock">Unlock</string>
-    <string name="app_lock_prompt_title">Unlock Aurora Store</string>
+    <string name="app_lock_prompt_title">Unlock Aurora Store Jetour</string>
     <string name="app_lock_prompt_subtitle">Enter phone screen lock pattern, PIN, password or fingerprint</string>
     <string name="confirm_deeplink_title">Confirm external links</string>
-    <string name="confirm_deeplink_summary">Ask before opening an app listing from a link, preventing ads from launching Aurora Store without your consent.</string>
-    <string name="confirm_deeplink_sheet_title">Continue to Aurora Store?</string>
-    <string name="confirm_deeplink_sheet_message">An external app wants to open Aurora Store</string>
+    <string name="confirm_deeplink_summary">Ask before opening an app listing from a link, preventing ads from launching Aurora Store Jetour without your consent.</string>
+    <string name="confirm_deeplink_sheet_title">Continue to Aurora Store Jetour?</string>
+    <string name="confirm_deeplink_sheet_message">An external app wants to open Aurora Store Jetour</string>
     <string name="confirm_deeplink_sheet_source">Opened from %1$s</string>
     <string name="installer_service_available">"Aurora Services is available and ready to install."</string>
     <string name="installer_service_unavailable">Install Aurora Services 1.0.9 or above, or change the installer.</string>
@@ -284,11 +274,11 @@
     <string name="pref_updates_warn_trackers">"Warn about new trackers in app updates"</string>
     <string name="pref_updates_warn_trackers_desc">"Show a warning before updating when the new version adds trackers that were not in the installed version"</string>
     <string name="pref_self_update">"Self-update"</string>
-    <string name="pref_self_update_desc">"Offer new Aurora Store builds in the Updates tab."</string>
+    <string name="pref_self_update_desc">"Offer new Aurora Store Jetour builds in the Updates tab."</string>
     <string name="pref_aurora_only">"Filter apps from other sources."</string>
-    <string name="pref_aurora_only_desc">"Do not check for updates for apps installed from sources outside Aurora Store"</string>
+    <string name="pref_aurora_only_desc">"Do not check for updates for apps installed from sources outside Aurora Store Jetour"</string>
     <string name="pref_source_filters_title">"Filter apps from other sources"</string>
-    <string name="pref_source_filters_desc_all">"Skip every app not installed by Aurora Store"</string>
+    <string name="pref_source_filters_desc_all">"Skip every app not installed by Aurora Store Jetour"</string>
     <string name="pref_source_filters_desc_none">"No installers excluded"</string>
     <string name="pref_source_filters_desc_count">"%1$d installer(s) excluded"</string>
     <string name="source_filters_all">"Filter all other installers"</string>
@@ -338,6 +328,9 @@
     <string name="title_installation">"Installation"</string>
     <string name="title_installed">"Installed"</string>
     <string name="title_installer">"App installer"</string>
+    <string name="insufficient_storage_title">Not enough space</string>
+    <string name="insufficient_storage_desc">%1$s needs %2$s, but only %3$s is available.</string>
+    <string name="insufficient_storage_hint">Free up %1$s and try again.</string>
     <string name="title_install_favourites">"Install favourites?"</string>
     <string name="install_favourites_summary">"This will download and install %1$d apps."</string>
     <string name="install_favourites_warning">"You may see a separate installation prompt for each app."</string>
@@ -352,7 +345,7 @@
     <string name="pref_notification_categories">Categories</string>
     <string name="pref_notification_categories_desc">Tune sound and importance for each kind of notification</string>
     <string name="pref_notification_disabled">Notifications are turned off</string>
-    <string name="pref_notification_disabled_desc">Tap to enable notifications for Aurora Store</string>
+    <string name="pref_notification_disabled_desc">Tap to enable notifications for Aurora Store Jetour</string>
     <string name="title_spoof_manager">"Spoof manager"</string>
     <string name="title_search_suggestion">"Search suggestion"</string>
     <string name="title_search_results">"Search results"</string>
@@ -387,11 +380,11 @@
     <string name="update_available">update available</string>
     <string name="updates_available">updates available</string>
     <string name="updates_self_header">Self-update</string>
-    <string name="updates_self_desc">A newer build of Aurora Store is available</string>
+    <string name="updates_self_desc">A newer build of Aurora Store Jetour is available</string>
     <string name="updates_incompatible_header">Incompatible updates</string>
     <string name="updates_incompatible_desc">These system app updates cannot be installed on this OS</string>
     <string name="updates_approval_header">Updates requiring approval</string>
-    <string name="updates_approval_desc">These apps were not installed by Aurora. Updating them prompts to transfer app update ownership.</string>
+    <string name="updates_approval_desc">These apps were not installed by Aurora Store Jetour. Updating them prompts to transfer app update ownership.</string>
     <string name="updates_app_details">Details</string>
     <string name="updates_ignored_header">Ignored</string>
     <string name="updates_ignored_desc">These updates are hidden until you unignore them</string>
@@ -422,7 +415,7 @@
     <string name="pref_updates_auto_notify">Check &amp; notify for available updates</string>
     <string name="pref_updates_auto_install">Check &amp; install available updates automatically</string>
     <string name="pref_updates_check_frequency">Automatic updates frequency</string>
-    <string name="pref_updates_check_frequency_desc">How often Aurora checks for app updates.</string>
+    <string name="pref_updates_check_frequency_desc">How often Aurora Store Jetour checks for app updates.</string>
     <string name="pref_updates_check_frequency_3h">Every 3 hours</string>
     <string name="pref_updates_check_frequency_6h">Every 6 hours</string>
     <string name="pref_updates_check_frequency_12h">Every 12 hours</string>
@@ -445,11 +438,11 @@
     <string name="pref_theme_style_light">Light</string>
     <string name="pref_theme_style_dark">Dark</string>
     <string name="pref_ui_dynamic_color">Dynamic colors</string>
-    <string name="pref_ui_dynamic_color_desc">Use colors from your wallpaper. Turn off for Aurora\'s brand palette.</string>
+    <string name="pref_ui_dynamic_color_desc">Use colors from your wallpaper. Turn off for Aurora Store Jetour\'s brand palette.</string>
     <string name="pref_ui_layout">Layout</string>
     <string name="pref_ui_layout_tab">Select default tab</string>
     <string name="app_links_title">App links</string>
-    <string name="app_links_desc">Allow Aurora Store to open supported links</string>
+    <string name="app_links_desc">Allow Aurora Store Jetour to open supported links</string>
     <string name="app_link_play_store" translatable="false">play.google.com</string>
     <string name="google_play_store_desc">Google Play, also known as the Google Play Store and formerly Android Market.</string>
     <string name="app_link_android_market" translatable="false">market.android.com</string>
@@ -473,13 +466,13 @@
     <string name="onboarding_permission_esa_desc">To save APK expansion files (OBBs) for large apps &amp; games.</string>
     <string name="onboarding_permission_esm">"External storage manager"</string>
     <string name="onboarding_permission_installer">"Installer permission"</string>
-    <string name="onboarding_permission_installer_desc">"Allow installing apps from Aurora Store"</string>
+    <string name="onboarding_permission_installer_desc">"Allow installing apps from Aurora Store Jetour"</string>
     <string name="onboarding_permission_installer_legacy_desc">"Allow installation of apps from unknown sources"</string>
     <string name="onboarding_permission_notifications">"Notifications"</string>
     <string name="onboarding_permission_notifications_desc">"Send notifications regarding installations status"</string>
     <string name="onboarding_permission_doze">"Background downloads"</string>
-    <string name="onboarding_permission_doze_desc">"Allow Aurora Store to download and update apps in background"</string>
-    <string name="onboarding_permission_select">"Aurora Store requires following permissions"</string>
+    <string name="onboarding_permission_doze_desc">"Allow Aurora Store Jetour to download and update apps in background"</string>
+    <string name="onboarding_permission_select">"Aurora Store Jetour requires following permissions"</string>
     <string name="onboarding_gms_agreement">"I have read and agree to the microG Terms of Service and Privacy Policy"</string>
     <string name="onboarding_gms_missing">"We couldn't find Google Play Services on your device, several popular apps now require it to function properly!"</string>
     <string name="onboarding_gms_microg">"microG is a free and open-source implementation that provides similar functionality to run apps dependent on Google Play Services for Android devices through re-implementation.\n\nmicroG enables apps to access those Google APIs, enhancing compatibility for users while offering privacy benefits. \n\nmicroG will run automatically in the background when you open applications dependent on Google Mobile Services."</string>
@@ -522,15 +515,16 @@
     <string name="source_code_subtitle">Find out what\'s inside</string>
     <string name="license_subtitle" translatable="false">The GNU General Public License v3.0</string>
     <string name="privacy_policy_title">Privacy policy</string>
-    <string name="privacy_policy_subtitle">Learn how Aurora Store uses your data</string>
+    <string name="privacy_policy_subtitle">Learn how Aurora Store Jetour uses your data</string>
     <string name="disclaimer_subtitle">Accountability and responsibility</string>
 
     <!-- AboutFragment -->
-    <string name="made_with_love">Made with <xliff:g id="heart_emoji">%1$s</xliff:g> in India</string>
+    <string name="made_with_love">Made with <xliff:g id="heart_emoji">%1$s</xliff:g> @KangRio</string>
     <string name="version" translatable="false">v<xliff:g id="version_name">%1$s</xliff:g> (<xliff:g id="version_code">%2$d</xliff:g>)</string>
-    <string name="about_aurora_store_title">About Aurora Store</string>
-    <string name="about_aurora_store_subtitle">Learn more about Aurora Store</string>
-    <string name="about_aurora_store_summary">Aurora Store enables you to search and download apps from the official Google Play Store. You can check app descriptions, screenshots, updates, other users\' comments, and download the APK directly from Google Play to your device. To use Aurora Store, log in using Google Play account, when you first open and configure Aurora Store.\n\nUnlike a traditional app store, Aurora Store does not own, license or distribute any apps. All apps, app descriptions, screenshots and other content in Aurora Store are directly accessed, downloaded and/or displayed from Google Play. Aurora Store works exactly like a door or a browser, allowing you to log in to your Google Play account and find the apps from Google Play.\n\nPlease note that Aurora Store does not have any approval, sponsorship or authorization from Google, Google Play, any apps downloaded through Aurora Store or any app developers; neither does Aurora Store have any affiliation, cooperation or connection with them.</string>
+    <string name="about_aurora_store_title">About Aurora Store Jetour</string>
+    <string name="about_aurora_store_subtitle">Learn more about Aurora Store Jetour</string>
+    <string name="about_aurora_store_summary">Aurora Store Jetour enables you to search and download apps from the official Google Play Store. You can check app descriptions, screenshots, updates, other users\' comments, and download the APK directly from Google Play to your device. To use Aurora Store Jetour, log in using Google Play account, when you first open and configure Aurora Store Jetour.\n\nUnlike a traditional app store, Aurora Store Jetour does not own, license or distribute any apps. All apps, app descriptions, screenshots and other content in Aurora Store Jetour are directly accessed, downloaded and/or displayed from Google Play. Aurora Store Jetour works exactly like a door or a browser, allowing you to log in to your Google Play account and find the apps from Google Play.\n\nPlease note that Aurora Store Jetour does not have any approval, sponsorship or authorization from Google, Google Play, any apps downloaded through Aurora Store Jetour or any app developers; neither does Aurora Store Jetour have any affiliation, cooperation or connection with them.</string>
+    <string name="about_fork_notice" translatable="false">Aurora Store Jetour is a modified version of GStore by kangrio, itself a modified version of Aurora Store by Aurora OSS and The Calyx Institute, licensed under GPL-3.0-or-later. It comes with ABSOLUTELY NO WARRANTY. See the NOTICE and LICENSE files in the source code.</string>
 
     <!-- MoreDialogFragment -->
     <string name="title_more">More</string>
@@ -539,7 +533,7 @@
 
     <!-- InstallationPreference -->
     <string name="pref_clear_device_owner_title">Clear device owner</string>
-    <string name="pref_clear_device_owner_summary">Removes Aurora Store as the device owner app</string>
+    <string name="pref_clear_device_owner_summary">Removes Aurora Store Jetour as the device owner app</string>
     <string name="pref_clear_device_owner_desc">This will revoke session installer\'s permission to silently install app. Proceed with clearing device ownership?</string>
 
     <!-- DispenserFragment -->
@@ -549,7 +543,7 @@
     <!-- DialogDispenserInput-->
     <string name="no_dispensers_available">No dispensers available</string>
     <string name="add_dispenser_title">Add dispenser</string>
-    <string name="add_dispenser_summary">Add a token dispenser to Aurora Store. Token dispensers provide account credentials to Aurora Store for logging in anonymously.</string>
+    <string name="add_dispenser_summary">Add a token dispenser to Aurora Store Jetour. Token dispensers provide account credentials to Aurora Store Jetour for logging in anonymously.</string>
     <string name="add_dispenser_error">Invalid URL</string>
     <string name="add_dispenser_hint">Dispenser URL</string>
     <string name="remove_dispenser_title">Remove dispenser?</string>
@@ -588,8 +582,8 @@
 
     <!-- ForceRestartDialog -->
     <string name="force_restart_snack">Restart to apply changes?</string>
-    <string name="force_restart_title">Restart Aurora Store</string>
-    <string name="force_restart_summary">Aurora Store needs to be restarted to apply the newly changed settings</string>
+    <string name="force_restart_title">Restart Aurora Store Jetour</string>
+    <string name="force_restart_summary">Aurora Store Jetour needs to be restarted to apply the newly changed settings</string>
 
     <!-- DownloadFragment -->
     <string name="status_downloading">Downloading</string>
@@ -601,6 +595,11 @@
     <string name="status_verifying">Verifying</string>
     <string name="status_installing">Installing</string>
     <string name="status_installed">Installed</string>
+    <string name="status_awaiting_install">Waiting for confirmation</string>
+
+    <!-- Notifications -->
+    <string name="notification_install_prompt_pending">Tap to finish installing</string>
+    <string name="notification_none">Nothing to see here</string>
 
     <!-- UnarchivePackageReceiver -->
     <string name="authentication_required_title">Authentication required</string>
@@ -618,6 +617,7 @@
     <string name="no_description">No description available</string>
     <string name="permissions_requested"><xliff:g id="number_of_permissions">%1$d</xliff:g> permissions</string>
     <string name="details_more_info">More info</string>
+    <string name="details_more_files">Files</string>
     <string name="details_more_target_api">Targets</string>
     <string name="details_more_package_name">Package name</string>
     <string name="details_more_content_rating">Content rating</string>
@@ -643,6 +643,10 @@
     <plurals name="permissions_required">
         <item quantity="one">Permission required</item>
         <item quantity="other">Permissions required</item>
+    </plurals>
+    <plurals name="insufficient_storage_desc_multiple">
+        <item quantity="one">%1$d app needs %2$s, but only %3$s is available.</item>
+        <item quantity="other">%1$d apps need %2$s, but only %3$s is available.</item>
     </plurals>
     <plurals name="favourites_count">
         <item quantity="one">%1$d favourite</item>
@@ -679,6 +683,7 @@
     <string name="installed_sort_ascending">Ascending</string>
     <string name="installed_sort_descending">Descending</string>
     <string name="installed_filter">Filter</string>
+    <string name="download_sort_date_downloaded">Date downloaded</string>
     <string name="installed_filter_user_apps">User apps</string>
     <string name="installed_filter_system_apps">System apps</string>
     <string name="installed_filter_installer">Installed from</string>
@@ -717,4 +722,13 @@
 
     <!-- Network Dialog -->
     <string name="action_check">"Check"</string>
+
+    <string name="about_github">"GitHub"</string>
+    <string name="about_github_summary">"Código fuente de Aurora Store Jetour en GitHub."</string>
+    <string name="about_kofi">Ko-Fi</string>
+    <string name="about_kofi_summary">"Apoyá a kangrio, autor de GStore / AuroraStore-BYD"</string>
+    <string name="about_big_thanks">Big thanks</string>
+    <string name="about_big_thanks_summary">Gracias a Aurora OSS (Aurora Store) y a kangrio (GStore), proyectos en los que se basa este</string>
+
+    <string name="title_morphe">Morphe</string>
 </resources>

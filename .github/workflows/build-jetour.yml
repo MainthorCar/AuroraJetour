@@ -1,8 +1,10 @@
 name: Publicar Aurora Store Jetour
 
 # Se ejecuta a mano: pestaña "Actions" -> "Publicar Aurora Store Jetour" -> "Run workflow".
-# Compila la APK firmada, crea un Release y publica release_feed.json,
-# que es lo que lee la app para avisar que hay una actualización.
+# Compila la APK firmada y la publica como Release.
+#  - Versión normal: les llega como actualización a todos.
+#  - "Versión de prueba" tildada: se publica como pre-release; NO le llega a nadie
+#    como actualización. Sirve para probarla vos primero bajándola a mano.
 on:
   workflow_dispatch:
     inputs:
@@ -10,6 +12,11 @@ on:
         description: "Novedades de esta versión (se muestran en la app)"
         required: true
         default: "Mejoras y correcciones"
+      prueba:
+        description: "Versión de prueba (no se ofrece como actualización)"
+        type: boolean
+        required: false
+        default: false
 
 jobs:
   build:
@@ -17,6 +24,11 @@ jobs:
 
     permissions:
       contents: write
+      packages: read
+
+    env:
+      # Necesario para bajar las librerías de Morphe (GitHub Packages)
+      GITHUB_TOKEN: ${{ github.token }}
 
     steps:
       - name: Descargar el código
@@ -64,14 +76,14 @@ jobs:
 
       - name: Compilar APK
         run: |
-          ./gradlew :app:assembleJetourRelease \
+          ./gradlew :app:assembleVanillaRelease \
             -PcommitHash="$(git rev-parse --short HEAD)" \
             -PcommitTimestamp="$(git log -1 --format=%ct)"
 
       - name: Buscar la APK
         id: apk-path
         run: |
-          APK=$(find app/build/outputs/apk -name '*jetour*release*.apk' | head -n 1)
+          APK=$(find app/build/outputs/apk/vanilla/release -name '*.apk' | head -n 1)
           if [ -z "$APK" ]; then
             echo "No se encontró la APK"
             exit 1
@@ -89,12 +101,15 @@ jobs:
         id: tag
         env:
           VERSION_NAME: ${{ steps.apk-info.outputs.version-name }}
+          PRUEBA: ${{ github.event.inputs.prueba }}
         run: |
-          version="${VERSION_NAME#*\(}"
-          version="${version%\)}"
-          echo "TAG=jetour-${version}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          if [ "$PRUEBA" = "true" ]; then
+            echo "TAG=jetour-${VERSION_NAME}-prueba-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          else
+            echo "TAG=jetour-${VERSION_NAME}-${{ github.run_number }}" >> $GITHUB_OUTPUT
+          fi
 
-      - name: Generar release_feed.json
+      - name: Generar archivos de actualización
         env:
           TAG_NAME: ${{ steps.tag.outputs.TAG }}
           CHANGELOG: ${{ github.event.inputs.changelog }}
@@ -121,8 +136,10 @@ jobs:
             --arg download_url "${REPO_URL}/releases/download/${TAG_NAME}/AuroraStoreJetour.apk" \
             --arg icon_url "https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/refs/heads/master/app/src/main/res/mipmap-hdpi/ic_launcher.png" \
             '{version_name:$version_name, version_code:$version_code, download_url:$download_url, sha256:$sha256, icon_url:$icon_url, changelog:$changelog, size:$size, last_commit:$last_commit, updated_on:$updated_on, timestamp:$timestamp}' \
-            > release_feed.json
-          cat release_feed.json
+            > release_build.json
+          # Las versiones viejas (1.0.0 a 1.0.6) buscan este nombre
+          cp release_build.json release_feed.json
+          cat release_build.json
 
       - name: Publicar Release
         uses: softprops/action-gh-release@v2
@@ -130,9 +147,11 @@ jobs:
           tag_name: ${{ steps.tag.outputs.TAG }}
           name: Aurora Store Jetour ${{ steps.tag.outputs.TAG }}
           body: ${{ github.event.inputs.changelog }}
-          make_latest: true
+          prerelease: ${{ github.event.inputs.prueba == 'true' }}
+          make_latest: ${{ github.event.inputs.prueba == 'true' && 'false' || 'true' }}
           files: |
             AuroraStoreJetour.apk
+            release_build.json
             release_feed.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

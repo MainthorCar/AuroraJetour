@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation("org.microg.gms:conscrypt-gmscore:2.5.2")
     implementation("org.lsposed.hiddenapibypass:hiddenapibypass:6.1")
     compileOnly("androidx.annotation:annotation:1.9.1")
     compileOnly(project(":extension:stub"))
@@ -64,6 +65,9 @@ abstract class BuildExtensionTask : DefaultTask() {
 
     @TaskAction
     fun run() {
+        fs.delete {
+            delete("../app/src/main/assets/patches")
+        }
         fs.copy {
             from("build/intermediates/dex/release/minifyReleaseWithR8/classes.dex")
             into("../app/src/main/assets/patches/dex")

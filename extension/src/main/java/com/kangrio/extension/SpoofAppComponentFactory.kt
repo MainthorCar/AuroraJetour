@@ -9,8 +9,6 @@ import android.content.BroadcastReceiver
 import android.content.ContentProvider
 import android.content.Intent
 import android.content.pm.ApplicationInfo
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.lang.reflect.Method
@@ -18,11 +16,11 @@ import java.lang.reflect.Modifier
 
 @SuppressLint("NewApi")
 class SpoofAppComponentFactory: AppComponentFactory() {
+    private val TAG = "SpoofAppComponentFactory"
     var coreComponentFactory: Class<*>? = null
     var  checkCompatWrapper: Method? = null
-    private val handler = Handler(Looper.getMainLooper())
 
-    init {
+    private fun init() {
         try {
             HiddenApiBypass.addHiddenApiExemptions("L")
             coreComponentFactory = Class.forName("androidx.core.app.CoreComponentFactory")
@@ -37,31 +35,10 @@ class SpoofAppComponentFactory: AppComponentFactory() {
 
         }catch (_: Throwable) {}
         PackageManagerProxy.init()
-        // Jetour: la app ve una tablet, no un auto
+        // Aurora Store Jetour: la app ve una tablet, no un auto
         CarEnvironment.initUiModeProxy()
-        // Jetour: pantallas sin vibrador -> evitar que las apps se cierren al vibrar
+        // Aurora Store Jetour: pantallas sin vibrador -> evitar que las apps se cierren al vibrar
         NoVibratorService.init()
-    }
-
-    private fun initCrashReport(application: Application) {
-        fun check() {
-            try {
-                val context = application.applicationContext
-
-                if (context != null) {
-                    GithubCrashReport.init(context)
-                    return
-                }
-            } catch (_: NullPointerException) {
-                // Application not attached yet
-            }
-
-            handler.postDelayed({
-                check()
-            }, 100L)
-        }
-
-        check()
     }
 
     override fun instantiateActivity(
@@ -73,9 +50,9 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     }
 
     override fun instantiateApplication(cl: ClassLoader, className: String): Application {
+        init()
         return checkCompatWrapper(super.instantiateApplication(cl, className)).also {
             CarEnvironment.attach(it)
-            initCrashReport(it)
         }
     }
 
@@ -107,7 +84,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
 
             return obj
         } catch (e: Throwable) {
-            Log.w("AppFactory", $$"CoreComponentFactory$CompatWrapped is not being used", e)
+            Log.w(TAG, $$"CoreComponentFactory$CompatWrapped is not being used", e)
         }
         return obj
     }

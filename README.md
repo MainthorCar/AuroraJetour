@@ -2,10 +2,10 @@
 
 Versión comunitaria y **no oficial** de [Aurora Store](https://github.com/whyorean/AuroraStore), adaptada a la pantalla de la **Jetour T1** (Snapdragon 8155, Android 11).
 
-Está basada en [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD) de **kangrio**, que hizo posible usar microG y las apps de Google en pantallas de auto sin root.
+Está basada en [GStore](https://github.com/GStore0/GStore) (antes AuroraStore-BYD) de **kangrio**, que hizo posible usar microG y las apps de Google en pantallas de auto sin root.
 
 > [!NOTE]
-> Este proyecto no está relacionado con Aurora OSS, Jetour, Chery ni BYD. "Jetour" se usa solo para indicar con qué pantalla es compatible.
+> Este proyecto no está relacionado con Aurora OSS, GStore, Jetour, Chery ni BYD. "Jetour" se usa solo para indicar con qué pantalla es compatible.
 
 ---
 
@@ -16,7 +16,7 @@ Está basada en [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD) de
 * 🔄 **Actualizaciones desde este repositorio.** La app avisa cuando hay una versión nueva y se actualiza con un toque.
 * 🔇 **Sin reporte de errores a servidores externos.**
 
-Todo lo demás (microG, parcheo de apps, instaladores) viene de AuroraStore-BYD.
+Todo lo demás (microG, parcheo de apps, preparación de YouTube en el propio equipo con Morphe, instaladores) viene de GStore.
 
 ## 🚀 Instalación
 
@@ -34,15 +34,16 @@ Todo lo demás (microG, parcheo de apps, instaladores) viene de AuroraStore-BYD.
 
 ## 🛠 Compilar
 
-* Android Studio → **Build Variants** → `app`: **jetourDebug** (pruebas, firma de prueba) o **jetourRelease** (requiere `app/signing.properties`).
+* Android Studio → **Build Variants** → `app`: **vanillaDebug** (pruebas, firma de prueba) o **vanillaRelease** (requiere `app/signing.properties`).
+* Las librerías de Morphe se bajan de GitHub Packages: para compilar en una PC hace falta `gpr.user` y `gpr.key` (un token de GitHub con permiso `read:packages`) en `~/.gradle/gradle.properties`.
 * Publicar una versión: pestaña **Actions** → **Publicar Aurora Store Jetour** → **Run workflow**. Necesita los secretos `KEYSTORE_BASE64`, `KEY_ALIAS` y `KEY_PASSWORD`.
-* Antes de publicar, subí `jetourVersionCode` en `app/build.gradle.kts`.
+* Antes de publicar, subí `jetourVersionCode` en `app/build.gradle.kts`. Tildá **Versión de prueba** para publicarla sin que les llegue a todos.
 
 ## 📄 Licencia y modificaciones
 
 Este programa es software libre bajo la [GNU GPL v3 o posterior](LICENSE), igual que el proyecto original.
 
-Desde octubre de 2026, MainthorCar modificó la versión 1.0.3 de AuroraStore-BYD así:
+Desde octubre de 2026, MainthorCar modificó AuroraStore-BYD 1.0.3 y, desde noviembre de 2026, GStore (kangrio) así:
 - se agregó el perfil Jetour T1 Tablet y la ocultación del entorno de auto;
 - se cambiaron el nombre, el paquete y el ícono;
 - las actualizaciones apuntan a este repositorio;
@@ -53,9 +54,10 @@ El detalle está en el historial de commits.
 ## 🙏 Créditos
 
 * [Aurora Store](https://github.com/whyorean/AuroraStore): **Rahul Kumar Patel (whyorean)**, **AuroraOSS** y The Calyx Institute. Es el cliente libre de Google Play en el que se basa todo.
-* [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD): **kangrio**. Adaptó Aurora a pantallas de auto con microG y parcheo de apps sin root. Si te sirve este proyecto, apoyá también el suyo: [ko-fi.com/kangrio](https://ko-fi.com/kangrio).
+* [GStore](https://github.com/GStore0/GStore) / [AuroraStore-BYD](https://github.com/kangrio/AuroraStore-BYD): **kangrio**. Adaptó Aurora a pantallas de auto con microG, parcheo de apps sin root y preparación de YouTube con Morphe. Si te sirve este proyecto, apoyá también el suyo: [ko-fi.com/kangrio](https://ko-fi.com/kangrio).
 * [microG / GmsCore](https://github.com/microg/GmsCore): implementación libre de los servicios de Google.
 * [ARSCLib](https://github.com/REAndroid/ARSCLib): lectura y escritura de recursos binarios de Android.
+* [Morphe](https://github.com/MorpheApp): parches para YouTube y YouTube Music.
 * [AndroidHiddenApiBypass](https://github.com/LSPosed/AndroidHiddenApiBypass) de **LSPosed**.
 
 El aviso legal original de Aurora Store está en [DISCLAIMER.md](DISCLAIMER.md).

@@ -15,13 +15,11 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.serialization)
     alias(libs.plugins.google.ksp)
     alias(libs.plugins.ktlint)
-    alias(libs.plugins.rikka.tools.refine.plugin)
     alias(libs.plugins.hilt.android.plugin)
 }
 
-// Datos del commit para la versión. GitHub Actions los pasa con
-// -PcommitHash=... y -PcommitTimestamp=...; en una PC se usan valores fijos,
-// así el proyecto compila aunque Git no esté instalado o no esté en el PATH.
+// Aurora Store Jetour: datos del commit pasados por GitHub Actions (-PcommitHash / -PcommitTimestamp).
+// En una PC se usan valores fijos, así compila aunque Git no esté instalado.
 val lastCommitHash = providers.gradleProperty("commitHash").orElse("local")
 val lastCommitTimestamp = providers.gradleProperty("commitTimestamp").orElse("0")
 
@@ -48,7 +46,7 @@ kotlin {
 }
 
 configure<ApplicationExtension> {
-    namespace = "com.aurora.store"
+    namespace = "com.kangrio.gstore"
     compileSdk {
         version = release(37) {
             minorApiLevel = 0
@@ -56,7 +54,8 @@ configure<ApplicationExtension> {
     }
 
     defaultConfig {
-        applicationId = "com.aurora.store"
+        // Aurora Store Jetour (basado en GStore de kangrio)
+        applicationId = "com.mainthorcar.aurorajetour"
         minSdk {
             version = release(23)
         }
@@ -64,14 +63,26 @@ configure<ApplicationExtension> {
             version = release(37)
         }
 
-        versionCode = 76
-        versionName = "4.8.4"
+        val baseVersionCode = 76
+        val baseVersionName = "4.8.4"
 
-        testInstrumentationRunner = "com.aurora.store.HiltInstrumentationTestRunner"
+        // Versión de Aurora Store Jetour: subir en cada release (107 = 1.0.7).
+        // versionCode tiene que ser mayor que 76 (las versiones viejas de Jetour usaban 76).
+        val jetourVersionCode = 107
+        // Subir cuando cambie lo que se inyecta en las apps (extension/ o Patcher).
+        val patchVersionCode = 8
+        versionCode = jetourVersionCode
+        versionName = "${jetourVersionCode / 100}.${(jetourVersionCode / 10) % 10}.${jetourVersionCode % 10}"
+
+        testInstrumentationRunner = "com.kangrio.gstore.HiltInstrumentationTestRunner"
         testInstrumentationRunnerArguments["disableAnalytics"] = "true"
 
         buildConfigField("String", "EXODUS_API_KEY", "\"bbe6ebae4ad45a9cbacb17d69739799b8df2c7ae\"")
         buildConfigField("long", "BUILD_TIMESTAMP", "${lastCommitTimestamp.get()}L")
+        buildConfigField("String", "BASE_APPLICATION_ID", "\"com.aurora.store\"")
+        buildConfigField("String", "BASE_VERSION_NAME", "\"$baseVersionName\"")
+        buildConfigField("int", "BASE_VERSION_CODE", "$baseVersionCode")
+        buildConfigField("int", "PATCH_VERSION_CODE", "$patchVersionCode")
 
         missingDimensionStrategy("device", "vanilla")
     }
@@ -128,6 +139,7 @@ configure<ApplicationExtension> {
 
     productFlavors {
         create("vanilla") {
+            isDefault = true
             dimension = "device"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
         }
@@ -143,29 +155,6 @@ configure<ApplicationExtension> {
             dimension = "device"
             versionNameSuffix = "-preload"
             buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
-        }
-
-        // Aurora Store Jetour: pantalla de la Jetour T1 (AOSP sin root, con microG).
-        // Basado en el flavor "byd" de AuroraStore-BYD (kangrio).
-        create("jetour") {
-            isDefault = true
-            dimension = "device"
-            applicationId = "com.mainthorcar.aurorajetour"
-
-            // Versión de Aurora Store Jetour. Subir este número en cada release.
-            // 1-9 -> 0.0.X, 10-99 -> 0.X.X, 100-999 -> X.X.X
-            val jetourVersionCode = 106
-            val major = jetourVersionCode / 100
-            val minor = (jetourVersionCode / 10) % 10
-            val patch = jetourVersionCode % 10
-            val jetourVersionName = "jetour($major.$minor.$patch)"
-
-            versionNameSuffix = "-$jetourVersionName"
-            buildConfigField("Boolean", "SHOW_ANONYMOUS_LOGIN", "true")
-
-            // Subir este número cuando cambie el parche que se aplica a las apps
-            val patchVersionCode = 6
-            buildConfigField("int", "PATCH_VERSION_CODE", "$patchVersionCode")
         }
     }
 
@@ -217,11 +206,16 @@ dependencies {
     // Icons
     implementation("androidx.compose.material:material-icons-extended:1.7.8")
 
+    // morphe
+    implementation("app.morphe:morphe-library:1.4.0:")
+    implementation("app.morphe:morphe-patcher:2.0.0")
+    implementation("org.jsoup:jsoup:1.23.2")
+
     // Markdown
     implementation("org.jetbrains:markdown:0.7.9")
 
     // patcher
-    implementation("io.github.reandroid:ARSCLib:1.4.0")
+    implementation("com.github.MorpheApp:ARSCLib:10d0708212")
     implementation("com.android.tools.build:apksig:8.8.0")
     implementation("org.bouncycastle:bcpkix-jdk18on:1.83")
 
@@ -275,12 +269,8 @@ dependencies {
     implementation(libs.auroraoss.gplayapi)
 
     // Shizuku
-    compileOnly(libs.rikka.hidden.stub)
-    implementation(libs.rikka.tools.refine.runtime)
     implementation(libs.rikka.shizuku.api)
     implementation(libs.rikka.shizuku.provider)
-
-    implementation(libs.lsposed.hiddenapibypass)
 
     // Test
     testImplementation(libs.junit)

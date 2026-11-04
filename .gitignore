@@ -45,8 +45,8 @@ app/nightly/*
 app/vanilla/*
 app/huawei/*
 app/preload/*
-app/byd/*
 
+app/src/main/assets/patches/*
 
 #Exclude signing configurations & keystore
 signing.properties
