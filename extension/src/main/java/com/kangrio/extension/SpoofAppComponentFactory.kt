@@ -19,6 +19,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     private val TAG = "SpoofAppComponentFactory"
     var coreComponentFactory: Class<*>? = null
     var  checkCompatWrapper: Method? = null
+    private var packageName: String? = null
 
     private fun init() {
         try {
@@ -34,6 +35,17 @@ class SpoofAppComponentFactory: AppComponentFactory() {
             }
 
         }catch (_: Throwable) {}
+        // Aurora Store Jetour: saber qué app es, por si está excluida del modo tablet
+        if (packageName == null) {
+            packageName = try {
+                Class.forName("android.app.ActivityThread")
+                    .getDeclaredMethod("currentPackageName")
+                    .invoke(null) as String?
+            } catch (_: Throwable) {
+                null
+            }
+        }
+        CarEnvironment.setPackage(packageName)
         PackageManagerProxy.init()
         // Aurora Store Jetour: la app ve una tablet, no un auto
         CarEnvironment.initUiModeProxy()
@@ -57,6 +69,7 @@ class SpoofAppComponentFactory: AppComponentFactory() {
     }
 
     override fun instantiateClassLoader(cl: ClassLoader, aInfo: ApplicationInfo): ClassLoader {
+        packageName = aInfo.packageName
         return checkCompatWrapper(super.instantiateClassLoader(cl, aInfo))
     }
 

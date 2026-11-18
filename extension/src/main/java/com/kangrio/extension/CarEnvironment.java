@@ -45,11 +45,33 @@ public final class CarEnvironment {
             "android.hardware.broadcastradio"
     ));
 
+    /**
+     * Apps a las que NO se les aplica el "modo tablet" (ni ocultar el auto, ni cambiar uiMode).
+     * Spotify: dentro de las pantallas escondidas del cluster se reinicia sin parar (parpadea).
+     */
+    private static final Set<String> EXCLUDED_PACKAGES = new HashSet<>(Arrays.asList(
+            "com.spotify.music"
+    ));
+
+    private static volatile boolean enabled = true;
+
     private CarEnvironment() {
     }
 
+    /** Se llama apenas se conoce el paquete de la app (antes de crear la Application). */
+    public static void setPackage(@Nullable String packageName) {
+        if (packageName != null && EXCLUDED_PACKAGES.contains(packageName)) {
+            enabled = false;
+            Log.i(TAG, "modo tablet desactivado para " + packageName);
+        }
+    }
+
+    public static boolean isEnabled() {
+        return enabled;
+    }
+
     public static boolean isHiddenFeature(@Nullable String name) {
-        return name != null && HIDDEN_FEATURES.contains(name);
+        return enabled && name != null && HIDDEN_FEATURES.contains(name);
     }
 
     // ---------------------------------------------------------------------
@@ -58,6 +80,9 @@ public final class CarEnvironment {
 
     @SuppressWarnings("unchecked")
     public static void initUiModeProxy() {
+        if (!enabled) {
+            return;
+        }
         try {
             IBinder original = ServiceManager.getService("uimode");
             if (original == null) {
@@ -148,6 +173,9 @@ public final class CarEnvironment {
     }
 
     public static void attach(@NonNull final Application application) {
+        if (!enabled) {
+            return;
+        }
         try {
             fix(application);
             application.registerComponentCallbacks(new ComponentCallbacks() {
