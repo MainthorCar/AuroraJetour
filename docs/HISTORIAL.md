@@ -1,6 +1,6 @@
 # Aurora Store Jetour — Historial del proyecto
 
-Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 04/11/2026.
+Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 18/11/2026.
 
 ---
 
@@ -41,6 +41,7 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 4. **Sin App Zygote** (`Patcher.kt` → `disableAppZygote`). Al parchear se quitan `useAppZygote` y `zygotePreloadName`, que en esta pantalla hacen que el sistema cierre Chrome a la fuerza.
 5. **Bienvenida:** los botones Atrás / Continuar suben 149 px para que no los tape la barra del aire.
 6. **Marca propia:** nombre, paquete, ícono propio (también en la pantalla de inicio de la app), bienvenida en español con créditos, reporte de errores apagado (el servidor era de kangrio) y actualizaciones desde el repo propio.
+8. **Apps excluidas del modo tablet** (`CarEnvironment.java` → `EXCLUDED_PACKAGES`). Algunas apps no se bancan el cambio de modo "auto" a "normal". A esas no se les aplica nada del punto 2 (ni UiModeManager, ni `uiMode`, ni funciones ocultas); siguen con microG y el vibrador falso. Hoy: **Spotify** (`com.spotify.music`). En el registro aparece `CarEnvironment: modo tablet desactivado para <paquete>`.
 7. **App en español** (`res/values-es/strings.xml`). GStore había quitado las traducciones; se recuperó el español y se tradujeron los textos nuevos. Los demás idiomas quedan en inglés.
 
 **Lo que viene de GStore (kangrio):** microG, parcheo de apps, instaladores y la **preparación de YouTube y YouTube Music en la propia pantalla con Morphe** (baja la versión correcta de APKMirror y la parchea). Por eso, desde la 1.0.7, YouTube volvió a funcionar.
@@ -58,6 +59,7 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | 1.0.6 | Intento de arreglar YouTube con las versiones preparadas de kangrio. **No sirvió**: kangrio dejó de publicarlas. |
 | 1.0.7 | **Pasa a la base GStore** (kangrio), con YouTube preparado en la pantalla con Morphe. Se mantiene todo lo de Jetour (parche 8). Publicada primero como prueba (`jetour-1.0.7-prueba-11`); YouTube, Chrome, Maps y microG andan. |
 | 1.0.8 | Logo propio en la pantalla de inicio y vuelve el español. Primera versión normal con la base GStore. |
+| 1.0.9 | Spotify fuera del modo tablet: deja de parpadear en el cluster del T1 Launcher (parche 9). Probada primero como `jetour-1.0.9-prueba-13`. |
 
 ## 5. Problemas resueltos (y cómo se encontraron)
 
@@ -73,9 +75,17 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | Actualizaciones de microG quedan en "Instalando" para siempre | Descargas viejas trabadas en Aurora → Descargas | Aurora → Descargas → **Cancel all** y borrar las descargas viejas. Después se instalan solas. |
 | Íconos distintos después de la 1.0.7 | GStore trajo su propio logo para la pantalla de inicio | Logo propio otra vez (1.0.8). Los iconitos de menús quedan con el estilo de GStore. |
 | App en inglés después de la 1.0.7 | GStore quitó las traducciones | Español recuperado (1.0.8) |
+| Spotify parpadea en el cluster del T1 Launcher (de lento a rapidísimo); en la pantalla principal anda bien | Nuestro modo tablet (`CarEnvironment`) le cambia el modo "auto" por "normal". Dentro de la pantalla escondida del cluster eso hace que el sistema reinicie la pantalla de Spotify cada ~3 s (`wm_relaunch_resume_activity` en `logcat -b events`). Maps, Waze y YouTube se bancan el cambio; Spotify no. | Spotify en `EXCLUDED_PACKAGES` (1.0.9) y reinstalarlo desde Aurora. |
 | Netflix / Disney+ no reproducen | La pantalla no tiene Widevine | No tiene arreglo legal. Opciones: firmware de Jetour con Widevine, bajar en el celular, archivos propios con VLC o Kodi. |
 
 **Lección:** no adivinar. Primero el registro del error, después el arreglo.
+
+**Lección del caso Spotify (18/11):** Aurora **modifica todas las apps que instala** (les mete `extension/`). Si una app instalada desde Aurora falla en algo que en otro lado anda bien, **lo primero es sospechar de nuestro parche** y probarlo desde Aurora Jetour, antes de probar versiones de la app o cosas de afuera. Por qué se descartaron otras causas: tamaño de ventana, orientación, versión de Spotify (9.1.94 y 9.2.0 fallaban igual) y el T1 Launcher.
+
+**Si otra app falla parecido:**
+1. Ver si se reinicia sola: `logcat -b events -c`, reproducir, `logcat -b events -d -e "nombre.del.paquete"`. Muchos `wm_relaunch_resume_activity` seguidos = se reinicia.
+2. Probar sacarla del modo tablet: agregar su paquete a `EXCLUDED_PACKAGES` en `extension/.../CarEnvironment.java`, subir `jetourVersionCode` y `patchVersionCode`, publicar como **prueba**, reinstalar la app desde Aurora.
+3. Si se arregla, publicar normal. Si no, sacarla de la lista.
 
 ## 6. Comandos útiles por el puente
 
@@ -96,13 +106,22 @@ El puente corre los comandos **dentro del auto**: sin `adb` y sin `shell` adelan
 | Apps instaladas | `pm list packages -3` |
 | Funciones y librerías del equipo | `pm list features` / `pm list libraries` |
 
+| ¿La app tiene nuestro modo tablet? | `logcat -d -s CarEnvironment` (si está excluida dice "modo tablet desactivado") |
+| Reinicios de pantalla de una app | `logcat -b events -d -e "nombre.del.paquete"` |
+| Ventanas, pantallas y tamaños | `am stack list` |
+| Lo que anota una sola app | `logcat -d --pid=$(pidof nombre.del.paquete)` |
+| Versión de una app | `dumpsys package nombre.del.paquete \| grep versionName` |
+| Registros internos de ventanas (en este auto existen `WM_DEBUG_RESIZE` y `WM_DEBUG_ORIENTATION`; **no** existen `WM_DEBUG_STATES` ni `WM_DEBUG_CONFIGURATION`) | `wm logging enable-text WM_DEBUG_RESIZE` (de a uno; apagar con `disable-text`) |
+
+Notas del puente: los comandos van de a uno (si uno falla, lo que sigue en la misma línea no corre). "Instalar app" acepta solo `.apk`; un `.xapk` o `.apkm` son varios APK juntos. En Aurora, **Descarga manual** necesita el código exacto de la variante de Google Play (arm64-v8a, Android 11 / API 30, densidad 213); un código de otra variante da "App not supported". "Consultar versiones" depende de Exodus Privacy y puede venir vacío.
+
 Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el cierre → comando de lectura.
 
 ## 7. Publicar una actualización
 
 1. Subir `jetourVersionCode` en `app/build.gradle.kts`: 107 es 1.0.7, 108 es 1.0.8, etc.
-2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 8). Así las apps instaladas aparecen para re-parchearse.
-3. GitHub → **Actions → Publicar Aurora Store Jetour → Run workflow**, elegir la rama **master**, escribir las novedades y apretar el botón.
+2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 9). Así las apps instaladas aparecen para re-parchearse.
+3. GitHub → **Actions → Publicar Aurora Store Jetour → Run workflow** (o pedírselo a Claude, que puede lanzarlo desde la sesión), elegir la rama **master**, escribir las novedades y apretar el botón.
    - Con **Versión de prueba** tildada se publica como pre-release (`jetour-X-prueba-N`). **No** le llega a nadie como actualización: la bajás vos a mano y la probás.
    - Sin tildar, es la versión normal y les llega a todos.
 4. Esperar el ✅ (unos 5 min; "Queued" es normal). Tus amigos ven la actualización en Aurora → Actualizaciones → Buscar actualizaciones.
