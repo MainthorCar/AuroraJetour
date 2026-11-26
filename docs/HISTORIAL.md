@@ -1,6 +1,6 @@
 # Aurora Store Jetour — Historial del proyecto
 
-Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 18/11/2026.
+Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualización: 26/11/2026.
 
 ---
 
@@ -36,7 +36,11 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
    - Identidad: Samsung Galaxy Tab S7+ Wi-Fi, SM-T970, Android 11, con firma certificada: `samsung/gts7xlwifixx/gts7xlwifi:11/RP1A.200720.012/T970XXU1BUAA:user/release-keys`. La fuente es la lista de MagiskHidePropsConf.
    - Hardware real leído en vivo (OpenGL, ABI, idiomas), pantalla 1920×1080, XLARGE.
    - Sin `type.automotive` ni `broadcastradio`, y sin la librería `autolink.shared.sdk`.
-2. **Las apps ven una tablet, no un auto** (`CarEnvironment.java` + `PackageManagerProxy.java`). Dentro de cada app parcheada se oculta `type.automotive` y el modo "car" pasa a "normal". Así Waze dejó de pedir Android Auto.
+2. **Las apps ven una tablet, no un auto** (`CarEnvironment.java` + `PackageManagerProxy.java`). Tiene 3 partes:
+   - **features:** oculta `type.automotive`. **Imprescindible:** sin esto Waze no arranca.
+   - **uimode:** `UiModeManager.getCurrentModeType()` responde "normal".
+   - **config:** cambiaba `Configuration.uiMode` de "auto" a "normal". **Apagada desde la 1.1.2**, porque hacía que el sistema reiniciara sin parar las pantallas que no se acomodan solas (parpadeo en el cluster: Spotify, resumen de ruta de Waze 5.28).
+   - **Llaves de prueba** (propiedad `debug.jetour.carenv`, se borra al reiniciar el auto): `setprop debug.jetour.carenv config_on` vuelve a prender config; `uimode`, `features` o `all` apagan esas partes. Después, `am force-stop paquete` y abrir la app. `logcat -d -s CarEnvironment` muestra qué quedó apagado.
 3. **Vibrador falso** (`NoVibratorService.java`). Si el equipo no tiene vibrador, responde "no hay vibración" en vez de dejar que la app se cierre.
 4. **Sin App Zygote** (`Patcher.kt` → `disableAppZygote`). Al parchear se quitan `useAppZygote` y `zygotePreloadName`, que en esta pantalla hacen que el sistema cierre Chrome a la fuerza.
 5. **Bienvenida:** los botones Atrás / Continuar suben 149 px para que no los tape la barra del aire.
@@ -60,6 +64,9 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | 1.0.7 | **Pasa a la base GStore** (kangrio), con YouTube preparado en la pantalla con Morphe. Se mantiene todo lo de Jetour (parche 8). Publicada primero como prueba (`jetour-1.0.7-prueba-11`); YouTube, Chrome, Maps y microG andan. |
 | 1.0.8 | Logo propio en la pantalla de inicio y vuelve el español. Primera versión normal con la base GStore. |
 | 1.0.9 | Spotify fuera del modo tablet: deja de parpadear en el cluster del T1 Launcher (parche 9). Probada primero como `jetour-1.0.9-prueba-13`. |
+| 1.1.0 (prueba) | No tocar la configuración solo en las pantallas del cluster. **No alcanzó**: Waze siguió parpadeando. Descartada. |
+| 1.1.1 (prueba) | Llaves `debug.jetour.carenv` para apagar partes del modo tablet. Resultado con Waze 5.28: all = no anda, features = no arranca, uimode = igual, **config = bastante mejor**. |
+| 1.1.2 | Parte **config** apagada de fábrica (parche 12). Arregla el parpadeo de Waze nuevo en el cluster. Publicada para todos el 26/11 para probar entre varios. |
 
 ## 5. Problemas resueltos (y cómo se encontraron)
 
@@ -76,6 +83,8 @@ Registro de todo lo que se hizo, por qué, y cómo seguir. Última actualizació
 | Íconos distintos después de la 1.0.7 | GStore trajo su propio logo para la pantalla de inicio | Logo propio otra vez (1.0.8). Los iconitos de menús quedan con el estilo de GStore. |
 | App en inglés después de la 1.0.7 | GStore quitó las traducciones | Español recuperado (1.0.8) |
 | Spotify parpadea en el cluster del T1 Launcher (de lento a rapidísimo); en la pantalla principal anda bien | Nuestro modo tablet (`CarEnvironment`) le cambia el modo "auto" por "normal". Dentro de la pantalla escondida del cluster eso hace que el sistema reinicie la pantalla de Spotify cada ~3 s (`wm_relaunch_resume_activity` en `logcat -b events`). Maps, Waze y YouTube se bancan el cambio; Spotify no. | Spotify en `EXCLUDED_PACKAGES` (1.0.9) y reinstalarlo desde Aurora. |
+| Waze 5.28 parpadea en el cluster al buscar o cargar una ruta (resumen de ruta), micrófono y "iniciar rápido" fallan | La parte **config** del modo tablet: `TripOverviewActivity` se reiniciaba ~3 veces por segundo (`wm_relaunch_resume_activity`) en la pantalla escondida del cluster (`displayId=3`). Waze 5.27.0.1 (código `1030748`) no tenía esa pantalla. | Config apagada de fábrica (1.1.2). Volver atrás: Descarga manual `1030748`. |
+| Spotify 5.6.0 "no abre" en el auto de un amigo | Tenía la **Aurora oficial 4.8.4** (`com.aurora.store`), que no hace el modo tablet: Google Play le dio el **Spotify para autos** (Android Automotive). | Desinstalar la Aurora oficial, instalar Aurora Store Jetour, iniciar sesión e instalar Spotify (9.x) de nuevo. |
 | Netflix / Disney+ no reproducen | La pantalla no tiene Widevine | No tiene arreglo legal. Opciones: firmware de Jetour con Widevine, bajar en el celular, archivos propios con VLC o Kodi. |
 
 **Lección:** no adivinar. Primero el registro del error, después el arreglo.
@@ -120,7 +129,7 @@ Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el
 ## 7. Publicar una actualización
 
 1. Subir `jetourVersionCode` en `app/build.gradle.kts`: 107 es 1.0.7, 108 es 1.0.8, etc.
-2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 9). Así las apps instaladas aparecen para re-parchearse.
+2. Si cambia lo que se inyecta en las apps (`extension/` o `Patcher.kt`), subir también `patchVersionCode` (hoy en 12). Así las apps instaladas aparecen para re-parchearse.
 3. GitHub → **Actions → Publicar Aurora Store Jetour → Run workflow** (o pedírselo a Claude, que puede lanzarlo desde la sesión), elegir la rama **master**, escribir las novedades y apretar el botón.
    - Con **Versión de prueba** tildada se publica como pre-release (`jetour-X-prueba-N`). **No** le llega a nadie como actualización: la bajás vos a mano y la probás.
    - Sin tildar, es la versión normal y les llega a todos.
@@ -153,6 +162,8 @@ Orden para capturar un cierre: `logcat -G 16M` → `logcat -c` → reproducir el
 ## 11. Pendientes e ideas
 
 - YouTube se vuelve a abrir y pausa la música al volver desde el T1 Launcher: lo más probable es que el launcher abra la app con `CLEAR_TASK`/`CLEAR_TOP`. Hay que usar `getLaunchIntentForPackage` con solo `FLAG_ACTIVITY_NEW_TASK`. Se ve en el chat del launcher.
+- Confirmar con varios usuarios que la 1.1.2 anda bien: Waze nuevo en el cluster (parpadeo, micrófono, iniciar rápido) y que en la pantalla principal **no pida Android Auto**. Si con config apagada todo anda, probar sacar a Spotify de `EXCLUDED_PACKAGES`.
+- Paquetes de Auroras incompatibles, para avisar desde el T1 Launcher: `com.aurora.store`, `com.aurora.store.nightly`, `com.aurora.store.byd`, `com.kangrio.gstore`. La correcta es `com.mainthorcar.aurorajetour`.
 - Traer novedades de kangrio: `git fetch kangrio` y unirlas a master (el remoto `kangrio` es solo para leer, **nunca** se sube nada ahí).
 - WebView 153: quitada. Waze anda con la de fábrica (83). Si en el futuro se actualiza, que sea a una versión **más nueva que la de Chrome** y de la misma fuente; probar Google después.
 - Releases viejas para borrar en GitHub si molestan: `jetour-1.0.0-5`, `jetour-1.0.1-4`.

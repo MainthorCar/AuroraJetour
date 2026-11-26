@@ -33,6 +33,7 @@ import java.util.Set;
  *    -> se usa desde PackageManagerProxy (hasSystemFeature / getSystemAvailableFeatures).
  * 2. UiModeManager.getCurrentModeType() devuelve "normal" en vez de "auto".
  * 3. Configuration.uiMode: si el sistema dice "auto", se corrige a "normal".
+ *    APAGADO de fábrica desde la 1.1.2 (ver partOff / debug.jetour.carenv).
  *
  * Si la pantalla no está en modo auto, los puntos 2 y 3 no cambian nada.
  */
@@ -72,12 +73,13 @@ public final class CarEnvironment {
 
     /**
      * Llaves de prueba, para desactivar partes del modo tablet sin compilar de nuevo.
-     * Desde el T1 Puente:  setprop debug.jetour.carenv config,uimode   (y reabrir la app)
-     *   config   = no cambiar Configuration.uiMode (auto -> normal)
+     * Desde el T1 Puente:  setprop debug.jetour.carenv uimode,features   (y reabrir la app)
+     *   config_on = SÍ cambiar Configuration.uiMode (auto -> normal), como hasta la 1.1.1.
+     *              Desde la 1.1.2 viene apagado: hacía parpadear apps en el cluster.
      *   uimode   = no tocar UiModeManager.getCurrentModeType()
      *   features = no ocultar android.hardware.type.automotive
      *   all      = nada de lo anterior
-     * Vacío (lo normal): todo activo.
+     * Vacío (lo normal): todo activo, menos config.
      */
     private static Set<String> disabledParts;
 
@@ -100,7 +102,15 @@ public final class CarEnvironment {
             disabledParts = parts;
             Log.i(TAG, "llaves de prueba, apagado: " + (parts.isEmpty() ? "nada" : parts.toString()));
         }
-        return disabledParts.contains("all") || disabledParts.contains(part);
+        if (disabledParts.contains("all")) {
+            return true;
+        }
+        if ("config".equals(part)) {
+            // Desde la 1.1.2 viene APAGADO de fábrica: cambiar uiMode hacía parpadear
+            // a Waze (resumen de ruta) y a Spotify en el cluster. Se prende con config_on.
+            return !disabledParts.contains("config_on");
+        }
+        return disabledParts.contains(part);
     }
 
     public static boolean isHiddenFeature(@Nullable String name) {

@@ -68,9 +68,9 @@ configure<ApplicationExtension> {
 
         // Versión de Aurora Store Jetour: subir en cada release (107 = 1.0.7).
         // versionCode tiene que ser mayor que 76 (las versiones viejas de Jetour usaban 76).
-        val jetourVersionCode = 111
+        val jetourVersionCode = 112
         // Subir cuando cambie lo que se inyecta en las apps (extension/ o Patcher).
-        val patchVersionCode = 11
+        val patchVersionCode = 12
         versionCode = jetourVersionCode
         versionName = "${jetourVersionCode / 100}.${(jetourVersionCode / 10) % 10}.${jetourVersionCode % 10}"
 
