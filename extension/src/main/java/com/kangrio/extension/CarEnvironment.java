@@ -70,8 +70,41 @@ public final class CarEnvironment {
         return enabled;
     }
 
+    /**
+     * Llaves de prueba, para desactivar partes del modo tablet sin compilar de nuevo.
+     * Desde el T1 Puente:  setprop debug.jetour.carenv config,uimode   (y reabrir la app)
+     *   config   = no cambiar Configuration.uiMode (auto -> normal)
+     *   uimode   = no tocar UiModeManager.getCurrentModeType()
+     *   features = no ocultar android.hardware.type.automotive
+     *   all      = nada de lo anterior
+     * Vacío (lo normal): todo activo.
+     */
+    private static Set<String> disabledParts;
+
+    private static boolean partOff(String part) {
+        if (disabledParts == null) {
+            Set<String> parts = new HashSet<>();
+            try {
+                Class<?> sp = Class.forName("android.os.SystemProperties");
+                String value = (String) sp.getMethod("get", String.class, String.class)
+                        .invoke(null, "debug.jetour.carenv", "");
+                if (value != null) {
+                    for (String s : value.split(",")) {
+                        if (!s.trim().isEmpty()) {
+                            parts.add(s.trim());
+                        }
+                    }
+                }
+            } catch (Throwable ignored) {
+            }
+            disabledParts = parts;
+            Log.i(TAG, "llaves de prueba, apagado: " + (parts.isEmpty() ? "nada" : parts.toString()));
+        }
+        return disabledParts.contains("all") || disabledParts.contains(part);
+    }
+
     public static boolean isHiddenFeature(@Nullable String name) {
-        return enabled && name != null && HIDDEN_FEATURES.contains(name);
+        return enabled && !partOff("features") && name != null && HIDDEN_FEATURES.contains(name);
     }
 
     // ---------------------------------------------------------------------
@@ -80,7 +113,7 @@ public final class CarEnvironment {
 
     @SuppressWarnings("unchecked")
     public static void initUiModeProxy() {
-        if (!enabled) {
+        if (!enabled || partOff("uimode")) {
             return;
         }
         try {
@@ -172,36 +205,8 @@ public final class CarEnvironment {
         }
     }
 
-    /**
-     * Pantallas de una app que están en otra pantalla (por ejemplo, las pantallas escondidas
-     * que usa el cluster del T1 Launcher): ahí NO se toca la configuración. Si se cambia
-     * "auto" por "normal", el sistema reinicia sin parar las pantallas que no se acomodan
-     * solas (parpadeo: Spotify, el resumen de ruta de Waze 5.28...).
-     */
-    private static void fixActivity(@NonNull Activity activity) {
-        if (!isOnMainDisplay(activity)) {
-            Log.i(TAG, "pantalla escondida: no se toca " + activity.getClass().getSimpleName());
-            return;
-        }
-        fix(activity);
-    }
-
-    private static boolean isOnMainDisplay(@NonNull Activity activity) {
-        try {
-            android.view.Display display = activity.getDisplay();
-            return display == null || display.getDisplayId() == android.view.Display.DEFAULT_DISPLAY;
-        } catch (Throwable e) {
-            try {
-                return activity.getWindowManager().getDefaultDisplay().getDisplayId()
-                        == android.view.Display.DEFAULT_DISPLAY;
-            } catch (Throwable ignored) {
-                return true;
-            }
-        }
-    }
-
     public static void attach(@NonNull final Application application) {
-        if (!enabled) {
+        if (!enabled || partOff("config")) {
             return;
         }
         try {
@@ -221,12 +226,12 @@ public final class CarEnvironment {
                 @Override
                 public void onActivityPreCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                     fix(application);
-                    fixActivity(activity);
+                    fix(activity);
                 }
 
                 @Override
                 public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-                    fixActivity(activity);
+                    fix(activity);
                 }
 
                 @Override
@@ -235,7 +240,7 @@ public final class CarEnvironment {
 
                 @Override
                 public void onActivityResumed(@NonNull Activity activity) {
-                    fixActivity(activity);
+                    fix(activity);
                 }
 
                 @Override
