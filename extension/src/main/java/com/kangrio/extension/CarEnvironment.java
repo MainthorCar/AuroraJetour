@@ -172,6 +172,34 @@ public final class CarEnvironment {
         }
     }
 
+    /**
+     * Pantallas de una app que están en otra pantalla (por ejemplo, las pantallas escondidas
+     * que usa el cluster del T1 Launcher): ahí NO se toca la configuración. Si se cambia
+     * "auto" por "normal", el sistema reinicia sin parar las pantallas que no se acomodan
+     * solas (parpadeo: Spotify, el resumen de ruta de Waze 5.28...).
+     */
+    private static void fixActivity(@NonNull Activity activity) {
+        if (!isOnMainDisplay(activity)) {
+            Log.i(TAG, "pantalla escondida: no se toca " + activity.getClass().getSimpleName());
+            return;
+        }
+        fix(activity);
+    }
+
+    private static boolean isOnMainDisplay(@NonNull Activity activity) {
+        try {
+            android.view.Display display = activity.getDisplay();
+            return display == null || display.getDisplayId() == android.view.Display.DEFAULT_DISPLAY;
+        } catch (Throwable e) {
+            try {
+                return activity.getWindowManager().getDefaultDisplay().getDisplayId()
+                        == android.view.Display.DEFAULT_DISPLAY;
+            } catch (Throwable ignored) {
+                return true;
+            }
+        }
+    }
+
     public static void attach(@NonNull final Application application) {
         if (!enabled) {
             return;
@@ -193,12 +221,12 @@ public final class CarEnvironment {
                 @Override
                 public void onActivityPreCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
                     fix(application);
-                    fix(activity);
+                    fixActivity(activity);
                 }
 
                 @Override
                 public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
-                    fix(activity);
+                    fixActivity(activity);
                 }
 
                 @Override
@@ -207,7 +235,7 @@ public final class CarEnvironment {
 
                 @Override
                 public void onActivityResumed(@NonNull Activity activity) {
-                    fix(activity);
+                    fixActivity(activity);
                 }
 
                 @Override
